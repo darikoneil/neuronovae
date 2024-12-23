@@ -9,14 +9,16 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "PROJECT_NAME"
+name = "neuronovae"
 version = "0.0.0"
 description = "DESCRIPTION"
 readme = "README.md"
-requires-python = ">=3.0, <=4.0"
+requires-python = ">=3.10, <=4.0"
 license = {file = "LICENSE"}
 keywords = [
-    "KEYWORD"
+    "Neuroscience",
+    "Visualization",
+    "Science"
 ]
 authors = [
   {name = "Darik A. O'Neil"}
@@ -35,6 +37,11 @@ classifiers = [
 
 
 dependencies = [
+    "colorcet",
+    "matplotlib",
+    "numpy",
+    "opencv-python",
+    "PyQt6",
 ]
 
 
@@ -44,8 +51,8 @@ dependencies = [
 
 
 [project.urls]
-documentation = "https://github.com/darikoneil/darik_oneil_python_template"
-repository = "https://github.com/darikoneil/darik_oneil_python_template"
+documentation = "https://github.com/darikoneil/neuronovae"
+repository = "https://github.com/darikoneil/neuronovae"
 
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +71,7 @@ testing = [
     "tomli-w"
 ]
 linting = [
+    "black",
     "flake8",
     "flake8-annotations",
     "flake8-bugbear",
@@ -109,7 +117,7 @@ all = [
 
 [tool.setuptools]
 packages = [
-    "PROJECT_NAME",
+    "neuronovae",
 ]
 
 
@@ -124,7 +132,7 @@ addopts = [
     "-s",
     "--color=yes",
     "-vv",
-    "--diff-width=120",
+    "--diff-width=88",
     "--html=./tests/testing-report.html",
 ]
 tests = "tests"
