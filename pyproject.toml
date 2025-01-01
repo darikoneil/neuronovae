@@ -74,15 +74,23 @@ linting = [
     "black",
     "flake8",
     "flake8-annotations",
+    "flake8-annotations-complexity",
+    "flake8-builtins",
     "flake8-bugbear",
     "flake8-class-attributes-order",
     "flake8-comprehensions",
-    "flake8-html",
-    "flake8-unused-arguments",
-    "flake8-mutable",
-    "flake8-simplify",
+    "flake8-dunder-all",
     "flake8-eradicate",
+    "flake8-html",
     "flake8-isort",
+    "flake8-mutable",
+    "flake8-noqa",
+    "flake8-rst-docstrings",
+    "flake8-simplify",
+    "flake8_sphinx_links",
+    "flake8-unused-arguments",
+    "flake8-use-pathlib",
+    "isort",
     "tryceratops",
 ]
 coverage = [
@@ -97,16 +105,18 @@ distribution = [
 ]
 documentation = [
     "autoclasstoc",
+    "autodoc_pydantic",
     "sphinx",
     "sphinx-autodoc-typehints",
+    "sphinx-gallery",
     "sphinx-rtd-theme",
 ]
 all = [
-    "PROJECT_NAME[testing]",
-    "PROJECT_NAME[linting]",
-    "PROJECT_NAME[coverage]",
-    "PROJECT_NAME[distribution]",
-    "PROJECT_NAME[documentation]",
+    "neuronovae[testing]",
+    "neuronovae[linting]",
+    "neuronovae[coverage]",
+    "neuronovae[distribution]",
+    "neuronovae[documentation]",
 ]
 
 
