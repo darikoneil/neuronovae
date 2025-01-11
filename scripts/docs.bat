@@ -22,7 +22,7 @@ if "%1"=="" (goto end)
 :: build source
 :source
 echo Building source
-call sphinx-apidoc -o docs/source %PROJECT_NAME% -f -e
+call sphinx-apidoc -o docs/source neuronovae -f -e
 shift
 goto loop
 

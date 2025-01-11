@@ -1,11 +1,11 @@
 [flake8]
-max-line-length = 80
-max-doc-length = 80
+max-line-length = 88
+max-doc-length = 88
 max-complexity = 25
-count = True
+count = False
 color = always
 show_source = False
-statistics = True
+statistics = False
 format = html
 ignore =
     ANN101,
@@ -19,7 +19,7 @@ ignore =
     TRY003
 extend-select = B950
 extend-ignore = E203,E501,E701
-htmldir = linting
+htmldir = linting_html
 unused-arguments-ignore-stub-functions = True
 unused-arguments-ignore-dunder = True
 unused-arguments-ignore-variadic-names = True

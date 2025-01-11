@@ -1,3 +1,5 @@
+# flake8: noqa
+
 import os
 import subprocess
 import sys
@@ -5,7 +7,6 @@ from pathlib import Path
 
 import pytest
 import toml
-
 
 
 def retrieve_details(path):
@@ -33,7 +34,13 @@ def collect_project():
     project_file = retrieve_project_file()
     project_directory = retrieve_project_directory(project_file)
     package_name, package_version, package_dependencies = retrieve_details(project_file)
-    return project_directory, project_file, package_name, package_version, package_dependencies
+    return (
+        project_directory,
+        project_file,
+        package_name,
+        package_version,
+        package_dependencies,
+    )
 
 
 # get project information and work from correct directory
