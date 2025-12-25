@@ -13,7 +13,7 @@ name = "neuronovae"
 version = "0.0.1"
 description = "DESCRIPTION"
 readme = "README.md"
-requires-python = ">=3.10, <=4.0"
+requires-python = ">=3.12, <=4.0"
 license = {file = "LICENSE"}
 keywords = [
     "Neuroscience",
@@ -38,7 +38,14 @@ classifiers = [
 
 
 dependencies = [
+    "av>=16.0.1",
+    "matplotlib>=3.10.8",
     "numpy",
+    "opencv-python>=4.11.0.86",
+    "pyqt6>=6.10.1",
+    "scipy>=1.15.3",
+    "tifffile>=2025.12.20",
+    "tqdm>=4.67.1",
 ]
 
 
@@ -58,7 +65,7 @@ repository = "https://github.com/darikoneil/neuronovae"
 
 
 [project.optional-dependencies]
-tests = [
+test = [
     "pytest",
     "pytest-sugar",
     "pytest-clarity",
@@ -73,30 +80,16 @@ lint = [
     "flake8-dunder-all",
     "ruff",
 ]
-coverage = [
+cov = [
     "coverage[toml]",
     "coveralls",
     "toml",
     "tomli-w"
 ]
-distribution = [
-    "build",
-    "twine",
-]
-documentation = [
-    "autoclasstoc",
-    "autodoc_pydantic",
-    "sphinx",
-    "sphinx-autodoc-typehints",
-    "sphinx-gallery",
-    "sphinx-rtd-theme",
-]
 all = [
-    "neuronovae[testing]",
-    "neuronovae[linting]",
-    "neuronovae[coverage]",
-    "neuronovae[distribution]",
-    "neuronovae[documentation]",
+    "neuronovae[test]",
+    "neuronovae[lint]",
+    "neuronovae[cov]",
 ]
 
 
@@ -124,7 +117,6 @@ addopts = [
     "-vv",
     "--diff-width=88",
 ]
-tests = "tests"
 console_output_style = "progress"
 
 

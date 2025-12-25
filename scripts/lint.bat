@@ -1,13 +1,16 @@
 @echo off
 
+echo [0;33m "Formatting & Linting --> neuronovae" [0m
+
 :: move to project root
 cd ..
 
-:: formatting imports (paths because the config is broken & don't care to make it work)
-isort ./neuronovae ./tests
+echo [0;33m "Formatting (RUFF)..." [0m
+:: run ruff formatter
+ruff format
 
-:: formatting code (paths because the config is broken & don't care to make it work)
-black ./neuronovae ./tests
+echo [0;33m "Linting (RUFF)..." [0m
+:: run ruff linter
+ruff check ./neuronovae ./tests -o .ruff.json --output-format json --fix --no-cache
 
-:: linting (putting paths here too because autism)
-flake8 ./neuronovae
+echo [0;33m "Finished Formatting & Linting --> neuronovae" [0m

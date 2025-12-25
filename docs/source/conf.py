@@ -10,11 +10,12 @@ import toml
 """
 
 # IMPORTS ps I can be done not so dumbly
-sys.path.insert(0, os.path.dirname(os.path.dirname(os. getcwd())))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.getcwd())))
 
 # get package details directly from pyproject
-pyproject_file = os.path.join(os.path.dirname(os.path.dirname(os. getcwd())),
-                              "pyproject.toml")
+pyproject_file = os.path.join(
+    os.path.dirname(os.path.dirname(os.getcwd())), "pyproject.toml"
+)
 package_details = toml.load(pyproject_file).get("project")
 
 project = package_details.get("name")
@@ -31,37 +32,38 @@ release = package_details.get("version")
 """
 
 
-master_docs = 'index'
+master_docs = "index"
 
 extensions = [
-    'sphinx.ext.todo',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
+    "sphinx.ext.todo",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosectionlabel",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.viewcode",
     "autoclasstoc",
-    'sphinx_autodoc_typehints']
+    "sphinx_autodoc_typehints",
+]
 
 autodoc_default_options = {
-    'members': True,
-    'special-members': False,
-    'private-members': False,
-    'inherited-members': True,
-    'undoc-members': True,
-    'exclude-members': '__weakref__',
+    "members": True,
+    "special-members": False,
+    "private-members": False,
+    "inherited-members": True,
+    "undoc-members": True,
+    "exclude-members": "__weakref__",
 }
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
-language = 'en'
+language = "en"
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
+    "python": ("https://docs.python.org/3", None),
 }
 
 source_suffix = ".rst"
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 pygments_style = "sphinx"
 
@@ -74,7 +76,7 @@ todo_include_todos = True
 ////////////////////////////////////////////////////////////////////////////////////////
 """
 
-typehints_defaults = 'comma'
+typehints_defaults = "comma"
 
 always_document_param_types = True
 
@@ -101,8 +103,8 @@ typehints_use_signature_return = False
 autoclasstoc_sections = [
     #'read-only-properties',
     #'read-write-properties',
-    'public-attrs',
-    'public-methods-without-dunders',
-    'private-methods',
-    'private-attrs',
-    ]
+    "public-attrs",
+    "public-methods-without-dunders",
+    "private-methods",
+    "private-attrs",
+]
