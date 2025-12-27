@@ -1,7 +1,7 @@
 from pathlib import Path
-import pytest
-import numpy as np
 
+import numpy as np
+import pytest
 
 IMAGE_2D = "dont_panic"
 

@@ -1,7 +1,10 @@
-import numpy as np
 from functools import cached_property
-from scipy.spatial import ConvexHull
 from typing import NamedTuple
+
+import numpy as np
+from scipy.spatial import ConvexHull
+
+from neuronovae.maths import flatten_index
 
 __all__ = [
     "ROI",
@@ -120,9 +123,22 @@ class ROI:
         return calculate_centroid(self.vertices)
 
     @cached_property
+    def index(self) -> np.ndarray:
+        return flatten_index(self._image_shape, self._pixels)
+
+    @cached_property
     def mask(self) -> np.ndarray:
         return calculate_mask(self._pixels, self._image_shape)
 
     @cached_property
+    def weights(self) -> np.ndarray:
+        weights = np.zeros(self._image_shape, dtype=float)
+        weights.ravel()[self.index] = self._weight
+        np.clip(weights, 0, 1, out=weights)
+        return weights
+
+    @cached_property
     def vertices(self) -> np.ndarray:
         return identify_vertices(self._pixels)
+
+    def map_intensities(self, intensities: np.ndarray) -> np.ndarray: ...

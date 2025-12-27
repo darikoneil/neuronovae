@@ -1,12 +1,6 @@
-[build-system]
-requires = ["setuptools", ]
-build-backend = "setuptools.build_meta"
-
-
 #///////////////////////////////////////////////////////////////////////////////////////
 #// PROJECT CONFIGURATION (GENERAL)
 #///////////////////////////////////////////////////////////////////////////////////////
-
 
 [project]
 name = "neuronovae"
@@ -22,7 +16,7 @@ keywords = [
     "Plotting",
 ]
 authors = [
-  {name = "Darik A. O'Neil"}
+    {name = "Darik A. O'Neil"}
 ]
 maintainers = [
     {name = "Darik A. O'Neil"}
@@ -31,40 +25,52 @@ classifiers = [
     "Programming Language :: Python",
 ]
 
-
 #///////////////////////////////////////////////////////////////////////////////////////
 #// PACKAGE DEPENDENCIES
 #///////////////////////////////////////////////////////////////////////////////////////
 
-
 dependencies = [
     "av>=16.0.1",
+    "boltons>=25.0.0",
     "matplotlib>=3.10.8",
     "numpy",
     "opencv-python>=4.11.0.86",
     "pyqt6>=6.10.1",
-    "scipy>=1.15.3",
+    "scipy>=1.16.3",
+    "setuptools>=80.9.0",
     "tifffile>=2025.12.20",
     "tqdm>=4.67.1",
 ]
-
 
 #///////////////////////////////////////////////////////////////////////////////////////
 #// PACKAGE URLS
 #///////////////////////////////////////////////////////////////////////////////////////
 
-
 [project.urls]
 documentation = "https://github.com/darikoneil/neuronovae"
 repository = "https://github.com/darikoneil/neuronovae"
-
 
 #///////////////////////////////////////////////////////////////////////////////////////
 #// OPTIONAL DEPENDENCIES (INCLUDING TEMPLATE DEPENDENCIES)
 #///////////////////////////////////////////////////////////////////////////////////////
 
-
 [project.optional-dependencies]
+cpu = [
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+]
+cu126 = [
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+]
+cu128 = [
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+]
+cu130 = [
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+]
 test = [
     "pytest",
     "pytest-sugar",
@@ -86,28 +92,73 @@ cov = [
     "toml",
     "tomli-w"
 ]
-all = [
+[dependency-groups]
+dev = [
     "neuronovae[test]",
     "neuronovae[lint]",
     "neuronovae[cov]",
 ]
 
+[tool.uv]
+conflicts = [
+  [
+      { extra = "cpu" },
+      { extra = "cu126" },
+      { extra = "cu128" },
+      { extra = "cu130" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu126", extra = "cu126" },
+    { index = "pytorch-cu128", extra = "cu128" },
+    { index = "pytorch-cu130", extra = "cu130" },
+]
+torchvision = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu126", extra = "cu126" },
+    { index = "pytorch-cu128", extra = "cu128" },
+    { index = "pytorch-cu130", extra = "cu130" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
 
 #///////////////////////////////////////////////////////////////////////////////////////
 #// BUILD CONFIGURATION (SETUPTOOLS)
 #///////////////////////////////////////////////////////////////////////////////////////
 
+[build-system]
+requires = ["setuptools", ]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = [
     "neuronovae",
 ]
 
-
 #///////////////////////////////////////////////////////////////////////////////////////
 #// TESTING CONFIGURATION (PYTEST)
 #///////////////////////////////////////////////////////////////////////////////////////
-
 
 [tool.pytest.ini_options]
 addopts = [
@@ -119,11 +170,9 @@ addopts = [
 ]
 console_output_style = "progress"
 
-
 #///////////////////////////////////////////////////////////////////////////////////////
 #// COVERAGE CONFIGURATION (COVERAGE)
 #///////////////////////////////////////////////////////////////////////////////////////
-
 
 [tool.coverage.run]
 branch = true
@@ -132,6 +181,8 @@ omit = [
     "*/tests/*",
     "*/config.py",
     "*/config-3.py",
+    "*/*JetBrains*/*",
+    "*/*PyCharm*Professional*/*",
 ]
 dynamic_context = "test_function"
 
@@ -156,3 +207,96 @@ pretty_print = true
 
 [tool.coverage.html]
 show_contexts = true
+
+#///////////////////////////////////////////////////////////////////////////////////////
+#// RUFF CONFIGURATION (GENERAL)
+#///////////////////////////////////////////////////////////////////////////////////////
+
+[tool.ruff]
+exclude = [
+    "*/Scratches/*",
+    "*/.idea/*",
+    "*/scripts/*",
+    "*/.git/*",
+    "*/.github/*",
+    "*/.vscode/*",
+    "*/__pycache__/*",
+    "*/.pytest_cache/*",
+    "*/*.egg-info/*",
+    "*/build/*",
+    "*/dist/*",
+    "*/.mypy_cache/*",
+    "*/.tox/*",
+    "*coverage*",
+    "*/.cache/*",
+    "*/docs/*",
+    "*/venv/*",
+    "*.gitignore",
+    "README.md",
+    "LICENSE",
+    ".flake8",
+    "*/linting/*",
+    ".readthedocs.yaml",
+    "*/Scratches and Consoles/*",
+    "*/External Libraries/*",
+    "*/assets/*"
+]
+line-length = 88 # Black Compatibility
+indent-width = 4 # Black Compatibility
+output-format = "json"
+
+#///////////////////////////////////////////////////////////////////////////////////////
+#// LINTING CONFIGURATION (RUFF)
+#///////////////////////////////////////////////////////////////////////////////////////
+
+[tool.ruff.lint]
+select = ["ALL", ]
+ignore = [
+    # /////////////////////////////////////////////////////////
+    # IGNORE THESE ENTIRE MODULES
+    # /////////////////////////////////////////////////////////
+    "C90", # mccabe complexity
+    "D", # pydocstyle
+    "DJ",  # django
+    "EXE", # flake8-executable
+    "PD", # pandas
+    "PL", # pylint
+    "PLR", # pylint refactor is super opinionated
+    "T10", # debugger
+    "TID", # flake8-tidy-imports
+    # /////////////////////////////////////////////////////////
+    # IGNORE THESE SPECIFIC RULES
+    # /////////////////////////////////////////////////////////
+    "ANN204",
+    "COM812",
+    "ANN401",
+    "ANN002",
+    "ANN003",
+    "E203",
+    "E501",
+    "E701",
+    "COM812",
+    "COM818",
+    'ERA001',
+    'T201', # Code comments
+    'RET503', # No explicit return None
+    'FIX002', # Fixme comments
+    'FIX004', # Fixme comments
+    "TD002",
+    "TD003",
+    "TRY003", # external messages in exceptions are too verbose
+    "S101",
+]
+
+
+#///////////////////////////////////////////////////////////////////////////////////////
+#// FORMATTING CONFIGURATION (RUFF)
+#///////////////////////////////////////////////////////////////////////////////////////
+
+[tool.ruff.format]
+quote-style = "double"  # Black Compatibility
+indent-style = "space"  # Black Compatibility
+skip-magic-trailing-comma = false  # Black Compatibility
+line-ending = "auto"  # Black Compatibility
+docstring-code-format = true  # Auto-formatting of code examples in docstrings
+docstring-code-line-length = "dynamic"  # Line length for code examples in docstrings

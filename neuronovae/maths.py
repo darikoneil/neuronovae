@@ -18,5 +18,4 @@ def normalize(image: np.ndarray) -> np.ndarray:
 def blend(
     foreground: np.ndarray, background: np.ndarray, alpha: np.ndarray
 ) -> np.ndarray:
-    alpha_background = 1.0 - alpha
     return foreground * alpha + background * (1 - alpha)

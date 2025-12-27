@@ -1,10 +1,14 @@
-from pathlib import Path
-from typing import Protocol, runtime_checkable, Any
-import cv2
-from tifffile import imread
-import numpy as np
-from neuronovae.errors import FileFormatError
 from os import PathLike
+from pathlib import Path
+from typing import Any, Protocol, runtime_checkable
+from warnings import warn
+
+import cv2
+import numpy as np
+from tifffile import imread
+
+from neuronovae.errors import FileFormatError
+from neuronovae.rois import ROI
 
 __all__ = [
     "load_images",
@@ -90,10 +94,106 @@ def load_images(file: str | PathLike) -> np.ndarray:
         file = Path(file)
         ext = file.suffix
     except (AttributeError, TypeError) as exc:
-        raise ValueError(f"{file} is not a valid file path.") from exc
+        msg = f"{file} is not a valid file path."
+        raise ValueError(msg) from exc
 
     loader = _ImagingLoaderRegistry().get_loader(ext)
     if loader is None:
         raise FileFormatError(file)
 
     return loader(file)
+
+
+"""
+|=======================================================================================|
+|DISPATCHING & REGISTRY OF ROI HANDLERS
+|=======================================================================================|
+"""
+
+
+@runtime_checkable
+class ROIHandler(Protocol):
+    def __call__(
+        self,
+        source: Path,
+    ) -> list[ROI]: ...
+
+
+class Suite2PHandler(ROIHandler):
+    def __call__(
+        self,
+        source: Path,
+    ) -> list[ROI]:
+        self._warn_file_format()
+        stat = Suite2PHandler._load_stat_file(source)
+        image_shape = Suite2PHandler._load_image_shape(source)
+        if (neuron_index := self._load_neuron_index(source)) is None:
+            neuron_index = np.ones(len(stat), dtype=bool)
+        return Suite2PHandler._build_rois(stat, neuron_index, image_shape)
+
+    @staticmethod
+    def _build_rois(
+        stat: np.ndarray, neuron_index: np.ndarray, image_shape: np.ndarray
+    ) -> list[ROI]:
+        rois = []
+        for idx, nrn in enumerate(stat):
+            if not neuron_index[idx]:
+                continue
+            pixels = np.asarray([nrn["ypix"], nrn["xpix"]]).T
+            weight = nrn["lam"]
+            roi = ROI(pixels, weight, image_shape)
+            rois.append(roi)
+        return rois
+
+    @staticmethod
+    def _warn_file_format() -> None:
+        msg = (
+            "\nSuite2P stores ROI information in pickled numpy files.\n"
+            "Pickled files can contain arbitrary code that can be executed upon loading.\n"
+            "Make sure you trust the source of these files!\n"
+        )
+        warn(msg, UserWarning, stacklevel=1)
+
+    @staticmethod
+    def _load_neuron_index(source: Path) -> np.ndarray | None:
+        iscell_file = source.joinpath("iscell.npy")
+        if not iscell_file.exists():
+            msg = f"{iscell_file.name} does not exist. Assuming all ROIs are neurons."
+            warn(msg, UserWarning, stacklevel=2)
+            return None
+        iscell = np.load(iscell_file, allow_pickle=True)
+        return iscell[:, 0] == 1
+
+    @staticmethod
+    def _load_image_shape(source: Path) -> tuple[int, int]:
+        ops_file = source.joinpath("ops.npy")
+        if not ops_file.exists():
+            msg = f"{ops_file.name} does not exist."
+            raise FileNotFoundError(msg)
+        ops = np.load(ops_file, allow_pickle=True).item()
+        return ops["Ly"], ops["Lx"]
+
+    @staticmethod
+    def _load_stat_file(source: Path) -> np.ndarray:
+        stat_file = source.joinpath("stat.npy")
+        if not stat_file.exists():
+            msg = f"{stat_file.name} does not exist."
+            raise FileNotFoundError(msg)
+        return np.load(stat_file, allow_pickle=True)
+
+
+def load_rois(
+    source: str | PathLike,
+    handler: ROIHandler,
+) -> list[ROI]:
+    try:
+        source = Path(source)
+    except (AttributeError, TypeError) as exc:
+        msg = f"{source} is not a valid file path."
+        raise ValueError(msg) from exc
+
+    if not isinstance(handler, ROIHandler):
+        msg = "handler must be a callable that meets the requirements of an ROIHandler."
+        raise TypeError(msg)
+
+    return handler(source)

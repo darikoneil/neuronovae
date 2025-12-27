@@ -1,6 +1,8 @@
-from typing import Protocol, runtime_checkable, NamedTuple
-from matplotlib.colors import LinearSegmentedColormap
+from functools import partial
 from itertools import cycle
+from typing import NamedTuple, Protocol, runtime_checkable
+
+from matplotlib.colors import LinearSegmentedColormap
 
 
 class Color(NamedTuple):
@@ -12,14 +14,30 @@ class Color(NamedTuple):
 
 @runtime_checkable
 class ColorGroup(Protocol):
-    colormaps: list[LinearSegmentedColormap | None]
-
-    def __init__(self, background: np.ndarray) -> None: ...
-
-    @staticmethod
-    def build_map(name: str, colors: list[Color]) -> LinearSegmentedColormap:
-        return LinearSegmentedColormap.from_list(name, colors)
+    colors: tuple[Color, ...]
 
     @classmethod
-    def get_iter(cls) -> iter:
-        return cycle(cls.colormaps)
+    def cycle(cls):
+        colors = cycle(cls.colors)
+        yield partial(cls.mapper, next(colors))
+
+    @staticmethod
+    def mapper(color, msg):
+        print(f"{msg}: using color {color}")
+        return partial(
+            LinearSegmentedColormap.from_list, f"{color}_map", [(1.0, 1.0, 1.0), color]
+        )
+
+    @property
+    def num_colors(self) -> int:
+        return len(self.colors)
+
+
+class Rainbow(ColorGroup):
+    RED = Color(255 / 255, 62 / 255, 65 / 255)
+    ORANGE = Color(255 / 255, 138 / 255, 67 / 255)
+    YELLOW = Color(255 / 255, 235 / 255, 127 / 255)
+    GREEN = Color(0.0, 201 / 255, 167 / 255)
+    BLUE = Color(0.0, 126 / 255, 167 / 255)
+
+    colors = tuple([RED, ORANGE, YELLOW, GREEN, BLUE])
