@@ -140,5 +140,3 @@ class ROI:
     @cached_property
     def vertices(self) -> np.ndarray:
         return identify_vertices(self._pixels)
-
-    def map_intensities(self, intensities: np.ndarray) -> np.ndarray: ...

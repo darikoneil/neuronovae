@@ -40,4 +40,4 @@ class Rainbow(ColorGroup):
     GREEN = Color(0.0, 201 / 255, 167 / 255)
     BLUE = Color(0.0, 126 / 255, 167 / 255)
 
-    colors = tuple([RED, ORANGE, YELLOW, GREEN, BLUE])
+    colors = (RED, ORANGE, YELLOW, GREEN, BLUE)

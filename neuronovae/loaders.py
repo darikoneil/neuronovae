@@ -1,6 +1,6 @@
 from os import PathLike
 from pathlib import Path
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, ClassVar, Protocol, runtime_checkable
 from warnings import warn
 
 import cv2
@@ -27,11 +27,11 @@ class ImagingLoader(Protocol):
 
 
 class _ImagingLoaderRegistry:
-    __registry: dict[str, ImagingLoader] = {}
+    __registry: ClassVar[dict[str, ImagingLoader]] = {}
 
     @classmethod
-    def register(cls, *extension: str):
-        def decorator(func) -> ImagingLoader:
+    def register(cls, *extension: str) -> ImagingLoader:
+        def decorator(func: ImagingLoader) -> ImagingLoader:
             nonlocal extension
             for ext in extension:
                 sanitized_ext = cls._sanitize_extension(ext)
@@ -119,7 +119,7 @@ class ROIHandler(Protocol):
     ) -> list[ROI]: ...
 
 
-class Suite2PHandler(ROIHandler):
+class Suite2PHandler:
     def __call__(
         self,
         source: Path,
@@ -182,6 +182,20 @@ class Suite2PHandler(ROIHandler):
         return np.load(stat_file, allow_pickle=True)
 
 
+def validate_roi_handler(handler: ROIHandler) -> ROIHandler:
+    if not isinstance(handler, ROIHandler):
+        msg = "handler must be a callable that meets the requirements of an ROIHandler."
+        raise TypeError(msg)
+    # NOTE: We do this to ensure that an instance of a handler is being used, not the class itself
+    #  (1) This allows for handlers that may have internal state in the future
+    #  (2) Since functions are instances of function, this check will pass if the user provides a function
+    #  instead of a class instance or definition
+    if isinstance(handler, type):
+        # noinspection PyArgumentList
+        return handler()
+    return handler
+
+
 def load_rois(
     source: str | PathLike,
     handler: ROIHandler,
@@ -191,9 +205,5 @@ def load_rois(
     except (AttributeError, TypeError) as exc:
         msg = f"{source} is not a valid file path."
         raise ValueError(msg) from exc
-
-    if not isinstance(handler, ROIHandler):
-        msg = "handler must be a callable that meets the requirements of an ROIHandler."
-        raise TypeError(msg)
-
+    handler = validate_roi_handler(handler)
     return handler(source)

@@ -46,38 +46,35 @@ def load_data() -> tuple[list[ROI], np.ndarray]:
 
 
 rois, video = load_data()
-
 selector = partial(default_rng(42).choice, len(rois), size=len(rois), replace=False)
-
 selected_rois = selector()
 
 normalized_video = normalize(video)
 ref_image = normalized_video.mean(axis=0)
+
 colormapper = LinearSegmentedColormap.from_list(
     "custom",
     [
         (0, 0, 0),
         (0, 0, 0),
-        (255 / 255, 62 / 255, 65 / 255),
-        (255 / 255, 62 / 255, 65 / 255),
+        (0.0, 126 / 255, 167 / 255),
+        (0.0, 126 / 255, 167 / 255),
     ],
 )
+
 final_frames = []
 for frame in tqdm(normalized_video, desc="Rendering ROIs", colour="green"):
     background = np.stack([frame for _ in range(3)], axis=-1)
     blank = np.stack([np.zeros_like(ref_image) for _ in range(3)], axis=-1)
     for index in selected_rois:
         roi = rois[index]
-        pixels = roi._pixels
-        index = flatten_index(roi._image_shape, pixels)
-        weights = np.zeros_like(ref_image)
-        weights.ravel()[index] = roi._weight
-        np.clip(weights, 0, 1, out=weights)
-        intensities = frame.ravel()[index]
+        pixel_index = roi.index
+        weights = roi.weights
+        intensities = frame.ravel()[pixel_index]
         colored_pixels = colormapper(intensities)[:, :3]
-        np.put(blank[:, :, 0], index, colored_pixels[:, 0])
-        np.put(blank[:, :, 1], index, colored_pixels[:, 1])
-        np.put(blank[:, :, 2], index, colored_pixels[:, 2])
+        np.put(blank[:, :, 0], pixel_index, colored_pixels[:, 0])
+        np.put(blank[:, :, 1], pixel_index, colored_pixels[:, 1])
+        np.put(blank[:, :, 2], pixel_index, colored_pixels[:, 2])
         background = blend(blank, background, weights[:, :, np.newaxis])
     final_frames.append(background)
 final_video = rescale(np.asarray(final_frames), 0, 255).astype(np.uint8)
