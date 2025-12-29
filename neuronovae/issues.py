@@ -23,3 +23,14 @@ class RBGFormatError(ValueError):
     def __init__(self, shape: tuple[int, ...]):
         self.shape = shape
         super().__init__(f"Expected data in RBG format, got shape: {shape}.")
+
+
+class PickleWarning(RuntimeWarning):
+    """
+    Warning raised when loading pickled files.
+    """
+
+    def __init__(self, msg: str | None = None):
+        msg = msg or ""
+        msg += "Loading pickled files can be unsafe. Ensure the source is trusted."
+        super().__init__(msg)

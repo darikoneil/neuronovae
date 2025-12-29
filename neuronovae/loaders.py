@@ -7,12 +7,10 @@ import cv2
 import numpy as np
 from tifffile import imread
 
-from neuronovae.errors import FileFormatError
+from neuronovae.issues import FileFormatError, PickleWarning
 from neuronovae.rois import ROI
 
-__all__ = [
-    "load_images",
-]
+__all__ = ["ROIHandler", "Suite2PHandler", "load_images", "load_rois"]
 
 """
 |=======================================================================================|
@@ -124,7 +122,11 @@ class Suite2PHandler:
         self,
         source: Path,
     ) -> list[ROI]:
-        self._warn_file_format()
+        # NOTE: As of 12-28-2025, Suite2P still uses numpy files containing pickled data structures
+        #  to store ROI information.
+        msg = "\nSuite2P stores ROI information in pickled numpy files.\n"
+        warn(msg, PickleWarning, stacklevel=3)
+
         stat = Suite2PHandler._load_stat_file(source)
         image_shape = Suite2PHandler._load_image_shape(source)
         if (neuron_index := self._load_neuron_index(source)) is None:
@@ -144,15 +146,6 @@ class Suite2PHandler:
             roi = ROI(pixels, weight, image_shape)
             rois.append(roi)
         return rois
-
-    @staticmethod
-    def _warn_file_format() -> None:
-        msg = (
-            "\nSuite2P stores ROI information in pickled numpy files.\n"
-            "Pickled files can contain arbitrary code that can be executed upon loading.\n"
-            "Make sure you trust the source of these files!\n"
-        )
-        warn(msg, UserWarning, stacklevel=1)
 
     @staticmethod
     def _load_neuron_index(source: Path) -> np.ndarray | None:
