@@ -31,7 +31,6 @@ classifiers = [
 
 dependencies = [
     "av>=16.0.1",
-    "boltons>=25.0.0",
     "matplotlib>=3.10.8",
     "numpy",
     "opencv-python>=4.11.0.86",

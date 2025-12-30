@@ -1,7 +1,7 @@
 from neuronovae.loaders import load_images
 import numpy as np
 from pathlib import Path
-from neuronovae.rois import ROI
+from neuronovae.rois import ROI, flatten_index
 import matplotlib
 from itertools import cycle
 from neuronovae.export import export_video
@@ -14,8 +14,7 @@ matplotlib.interactive(True)
 from matplotlib import pyplot as plt  # noqa: E402
 from matplotlib.patches import Polygon  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap  # noqa: E402
-from neuronovae.maths import normalize, flatten_index
-from neuronovae.maths import blend, rescale
+from neuronovae.colorize import rescale, normalize, blend
 
 
 def load_data() -> tuple[list[ROI], np.ndarray]:

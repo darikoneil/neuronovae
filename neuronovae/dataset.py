@@ -8,7 +8,7 @@ from pydantic import Field, field_validator, model_validator
 from pydantic.config import ConfigDict
 from pydantic.dataclasses import dataclass
 
-from neuronovae.colorize import ColorInstruction
+from neuronovae.cmapping import ColorInstruction
 from neuronovae.rois import ROI
 
 _configuration = ConfigDict(
@@ -25,18 +25,13 @@ class Dataset:
         title="Color Instructions", min_length=1
     )
 
-    """
-    /==============================================================
-    / IMAGES VALIDATORS
-    /==============================================================
-    """
-
     @field_validator("images", mode="after")
     @classmethod
     def check_images_ndim(cls, v: np.ndarray) -> np.ndarray:
         if not 1 < v.ndim < 4:
             msg = "Images must be 2D (Y, X) or 3D (Frame, Y, X) numpy arrays."
             raise ValueError(msg)
+        return v
 
     @field_validator("instructions", mode="before")
     @classmethod
@@ -56,27 +51,18 @@ class Dataset:
 
     @model_validator(mode="after")
     def check_rois_in_bounds(self) -> "Dataset":
-        bounds = self.images.shape[-2:]
-        # for roi in self.rois:
-        #     assert
+        bounds = self.images.shape[-2] * self.images.shape[-1]
+        for roi in self.rois:
+            if roi.index.min() < 0 or roi.index.max() >= bounds:
+                msg = "ROI indices outside of image bounds."
+                raise ValueError(msg)
         return self
 
 
 def validate_dataset(func: Callable) -> Callable:
     @wraps(func)
     def decorator(*args, **kwargs) -> Callable:
-        """
-        Inner decorator function that performs the validation.
-
-        :param args: Positional arguments for the method.
-
-        :param kwargs: Keyword arguments for the method.
-
-        :returns: The result of the decorated function.
-        """
-        # Get the signature of the function
         sig = inspect.signature(func)
-        # Bind the arguments to the function signature
         bound_args = sig.bind_partial(*args, **kwargs)
         bound_args.apply_defaults()
         bound_args.arguments.pop("kwargs", None)

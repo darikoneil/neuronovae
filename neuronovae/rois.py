@@ -4,8 +4,6 @@ from typing import NamedTuple
 import numpy as np
 from scipy.spatial import ConvexHull
 
-from neuronovae.maths import flatten_index
-
 __all__ = [
     "ROI",
 ]
@@ -66,6 +64,10 @@ def calculate_mask(
     int_x = np.round(pixels[:, 1]).astype(np.intp)
     mask[int_y, int_x] = True
     return mask
+
+
+def flatten_index(shape: tuple[int, ...], indices: np.ndarray) -> int:
+    return np.ravel_multi_index([indices[:, dim] for dim in range(len(shape))], shape)
 
 
 def identify_vertices(
@@ -133,8 +135,8 @@ class ROI:
     @cached_property
     def weights(self) -> np.ndarray:
         weights = np.zeros(self._image_shape, dtype=float)
-        weights.ravel()[self.index] = self._weight
-        np.clip(weights, 0, 1, out=weights)
+        weights.ravel()[self.index] = self._weight / self._weight.max()
+        #np.clip(weights, 0, 1, out=weights)
         return weights
 
     @cached_property

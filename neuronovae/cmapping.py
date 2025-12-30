@@ -2,6 +2,11 @@ from typing import NamedTuple
 
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
+from pydantic.config import ConfigDict
+from pydantic.dataclasses import dataclass
+
+
+# TODO: Add functionality for more complex instructions
 
 
 class Color(NamedTuple):
@@ -11,50 +16,7 @@ class Color(NamedTuple):
     a: float = 1.0
 
 
-WHITE: Color = Color(
-    1.0,
-    1.0,
-    1.0,
-)
-
-BLACK: Color = Color(
-    0.0,
-    0.0,
-    0.0,
-)
-
-RED: Color = Color(
-    255 / 255,
-    62 / 255,
-    65 / 255,
-)
-
-ORANGE: Color = Color(
-    255 / 255,
-    138 / 255,
-    67 / 255,
-)
-
-YELLOW: Color = Color(
-    255 / 255,
-    235 / 255,
-    127 / 255,
-)
-
-GREEN: Color = Color(
-    0.0,
-    201 / 255,
-    167 / 255,
-)
-
-BLUE: Color = Color(
-    0.0,
-    126 / 255,
-    167 / 255,
-)
-
-
-# TODO: Assess performance optimizations
+# TODO: Assess performance optimizations (if necessary)
 class ColorMap:
     def __init__(self, colors: tuple[Color, ...]):
         self.colors = np.asarray([Color(*color) for color in colors])
@@ -63,3 +25,18 @@ class ColorMap:
 
     def __call__(self, values: np.ndarray) -> np.ndarray:
         return self._mapping(values)
+
+
+_configuration = ConfigDict(
+    validate_assignment=True,
+    arbitrary_types_allowed=True,
+)
+
+
+@dataclass(config=_configuration)
+class ColorInstruction:
+    cmap: ColorMap
+    indices: np.ndarray
+
+    def __call__(self) -> tuple[ColorMap, np.ndarray]:
+        return self.cmap, self.indices

@@ -5,6 +5,16 @@ import numpy as np
 from tqdm import tqdm
 
 
+# TODO: Implement export functions for GIF
+def export_gif() -> None:
+    pass
+
+
+# TODO: Implement export functions for images
+def export_image() -> None:
+    pass
+
+
 def export_video(path: Path, video: np.ndarray, fps: int = 30) -> None:
     frames, height, width = video.shape[:3]
     container = av.open(path, mode="w")

@@ -175,6 +175,7 @@ class Suite2PHandler:
         return np.load(stat_file, allow_pickle=True)
 
 
+# TODO: Add CaImAnHandler
 def validate_roi_handler(handler: ROIHandler) -> ROIHandler:
     if not isinstance(handler, ROIHandler):
         msg = "handler must be a callable that meets the requirements of an ROIHandler."
