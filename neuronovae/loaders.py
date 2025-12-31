@@ -117,6 +117,9 @@ class ROIHandler(Protocol):
     ) -> list[ROI]: ...
 
 
+# DOCME: ROIHandler
+
+
 class Suite2PHandler:
     def __call__(
         self,
@@ -175,6 +178,9 @@ class Suite2PHandler:
         return np.load(stat_file, allow_pickle=True)
 
 
+# DOCME: Suite2PHandler
+
+
 # FEATURE: Add CaImAnHandler
 def validate_roi_handler(handler: ROIHandler) -> ROIHandler:
     if not isinstance(handler, ROIHandler):
@@ -188,7 +194,9 @@ def validate_roi_handler(handler: ROIHandler) -> ROIHandler:
         # noinspection PyArgumentList
         return handler()
     return handler
-#DOCME: validate_roi_handler
+
+
+# DOCME: validate_roi_handler
 
 
 def load_rois(
@@ -202,4 +210,6 @@ def load_rois(
         raise ValueError(msg) from exc
     handler = validate_roi_handler(handler)
     return handler(source)
-#DOCME: load_rois
+
+
+# DOCME: load_rois

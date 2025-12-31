@@ -52,7 +52,10 @@ class Dataset:
                 msg = "ROI indices outside of image bounds."
                 raise ValueError(msg)
         return self
+
+
 # DOCME: Dataset
+
 
 def validate_dataset(func: Callable) -> Callable:
     @wraps(func)
@@ -71,4 +74,6 @@ def validate_dataset(func: Callable) -> Callable:
         return func(**{**bound_args.arguments, **vars(valid_args)})
 
     return decorator
+
+
 # DOCME: validate_dataset
