@@ -56,6 +56,9 @@ repository = "https://github.com/darikoneil/neuronovae"
 #///////////////////////////////////////////////////////////////////////////////////////
 
 [project.optional-dependencies]
+gui = [
+    "dearpygui>=2.1.1",
+]
 cpu = [
     "torch>=2.9.1",
     "torchvision>=0.24.1",
@@ -72,38 +75,36 @@ cu130 = [
     "torch>=2.9.1",
     "torchvision>=0.24.1",
 ]
+
+[dependency-groups]
 test = [
+
+]
+lint = [
+
+]
+cov = [
+]
+docs = [
+
+]
+dev = [
     "pytest",
     "pytest-sugar",
     "pytest-clarity",
     "pytest-mock",
-    "toml",
-    "tomli-w"
-]
-lint = [
     "flake8",
     "flake8-annotations-complexity",
     "flake8-class-attributes-order",
     "flake8-dunder-all",
     "ruff",
-]
-cov = [
     "coverage[toml]",
     "coveralls",
     "toml",
-    "tomli-w"
-]
-docs = [
+    "tomli-w",
     "pymdown-extensions>=10.19.1",
     "mkdocs-material>=9.7.1",
     "mkdocstrings[python]>=1.0.0",
-]
-[dependency-groups]
-dev = [
-    "neuronovae[test]",
-    "neuronovae[lint]",
-    "neuronovae[cov]",
-    "neuronovae[docs]",
 ]
 
 [tool.uv]

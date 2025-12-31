@@ -11,13 +11,8 @@ from pydantic.dataclasses import dataclass
 from neuronovae.cmapping import ColorInstruction
 from neuronovae.rois import ROI
 
-_configuration = ConfigDict(
-    validate_assignment=True,
-    arbitrary_types_allowed=True,
-)
 
-
-@dataclass(config=_configuration)
+@dataclass(config=ConfigDict(validate_assignment=True, arbitrary_types_allowed=True))
 class Dataset:
     images: np.ndarray = Field(title="Images")
     rois: list[ROI] = Field(title="ROIs", min_length=1)
@@ -57,7 +52,7 @@ class Dataset:
                 msg = "ROI indices outside of image bounds."
                 raise ValueError(msg)
         return self
-
+# DOCME: Dataset
 
 def validate_dataset(func: Callable) -> Callable:
     @wraps(func)
@@ -76,3 +71,4 @@ def validate_dataset(func: Callable) -> Callable:
         return func(**{**bound_args.arguments, **vars(valid_args)})
 
     return decorator
+# DOCME: validate_dataset

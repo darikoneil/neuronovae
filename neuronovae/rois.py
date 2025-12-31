@@ -12,7 +12,7 @@ __all__ = [
 class Centroid(NamedTuple):
     y: float
     x: float
-
+#DOCME: Centroid
 
 def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
     """
@@ -53,6 +53,7 @@ def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
     center_x = abs(center_x)
     center_y = abs(center_y)
     return Centroid(center_y, center_x)
+#DOCME: calculate_centroid
 
 
 def calculate_mask(
@@ -64,10 +65,12 @@ def calculate_mask(
     int_x = np.round(pixels[:, 1]).astype(np.intp)
     mask[int_y, int_x] = True
     return mask
+#DOCME: calculate_mask
 
 
 def flatten_index(shape: tuple[int, ...], indices: np.ndarray) -> int:
     return np.ravel_multi_index([indices[:, dim] for dim in range(len(shape))], shape)
+#DOCME: flatten_index
 
 
 def identify_vertices(
@@ -75,6 +78,7 @@ def identify_vertices(
 ) -> np.ndarray:
     hull = ConvexHull(pixels)
     return pixels[hull.vertices, ...]
+#DOCME: identify_vertices
 
 
 class ROI:
@@ -142,3 +146,4 @@ class ROI:
     @cached_property
     def vertices(self) -> np.ndarray:
         return identify_vertices(self._pixels)
+#DOCME: ROI

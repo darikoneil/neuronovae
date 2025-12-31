@@ -64,11 +64,11 @@ def colorize_new(
     )
     colors = colormapper(intensity)[:, :, :3]
     g = np.clip((norm_images - norm_images.mean(axis=0)) / 0.2, 0, 1)
-    G = g[None, ..., None]
-    W = weights[:, None, ..., None]
-    A = intensity[:, :, None, None, None]
-    I = norm_images[None, ..., None]
-    C = colors[:, :, None, None, :]
+    g = g[None, ..., None]
+    w = weights[:, None, ..., None]
+    a = intensity[:, :, None, None, None]
+    i = norm_images[None, ..., None]
+    c = colors[:, :, None, None, :]
     delta = A * W * G * I * (C - 1.0)
     rgb = norm_images[..., None] * np.ones(3) + delta.sum(axis=0)
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
@@ -101,7 +101,7 @@ def colorize_new2(
 
     # spatial modulation g and base image B = g * I
     g = np.clip(norm_images / 0.2, 0, 1).astype(np.float32)
-    B = g * norm_images  # shape (T, Y, X)
+    b = g * norm_images  # shape (T, Y, X)
 
     # per-ROI per-frame color factor k = intensity * (color - 1)
     # shape (N, T, 3)
@@ -111,8 +111,8 @@ def colorize_new2(
     delta_sum = np.zeros((*images_f.shape, 3), dtype=np.float32)  # (T, Y, X, 3)
     for c in range(3):
         # S has shape (T, Y, X): sum over ROIs of weights * k[..., c]
-        S = np.einsum("nij,nt->tij", weights, k[:, :, c])
-        delta_sum[..., c] = B * S
+        s = np.einsum("nij,nt->tij", weights, k[:, :, c])
+        delta_sum[..., c] = b * s
 
     # base RGB is norm_images expanded to 3 channels
     rgb = norm_images[..., None] + delta_sum

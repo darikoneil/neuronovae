@@ -5,12 +5,12 @@ import numpy as np
 from tqdm import tqdm
 
 
-# TODO: Implement export functions for GIF
+# FEATURE: Implement export functions for GIF
 def export_gif() -> None:
     pass
 
 
-# TODO: Implement export functions for images
+# FEATURE: Implement export functions for images
 def export_image() -> None:
     pass
 
@@ -27,3 +27,4 @@ def export_video(path: Path, video: np.ndarray, fps: int = 30) -> None:
         container.mux(packet)
 
     container.close()
+# DOCME: export_video
