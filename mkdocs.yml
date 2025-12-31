@@ -1,0 +1,20 @@
+site_name: neuronovae
+site_url: https://readthedocs.org/neuronovae/
+theme:
+  features:
+    - header.autohide
+  name: material
+plugins:
+  - search
+  - tags
+  - mkdocstrings:
+      handlers:
+        python:
+          theme: material
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

@@ -5,7 +5,6 @@ from matplotlib.colors import LinearSegmentedColormap
 from pydantic.config import ConfigDict
 from pydantic.dataclasses import dataclass
 
-
 # TODO: Add functionality for more complex instructions
 
 
@@ -16,7 +15,6 @@ class Color(NamedTuple):
     a: float = 1.0
 
 
-# TODO: Assess performance optimizations (if necessary)
 class ColorMap:
     def __init__(self, colors: tuple[Color, ...]):
         self.colors = np.asarray([Color(*color) for color in colors])

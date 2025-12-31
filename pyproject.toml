@@ -31,6 +31,7 @@ classifiers = [
 
 dependencies = [
     "av>=16.0.1",
+    "boltons>=25.0.0",
     "matplotlib>=3.10.8",
     "numpy",
     "opencv-python>=4.11.0.86",
@@ -92,11 +93,17 @@ cov = [
     "toml",
     "tomli-w"
 ]
+docs = [
+    "pymdown-extensions>=10.19.1",
+    "mkdocs-material>=9.7.1",
+    "mkdocstrings[python]>=1.0.0",
+]
 [dependency-groups]
 dev = [
     "neuronovae[test]",
     "neuronovae[lint]",
     "neuronovae[cov]",
+    "neuronovae[docs]",
 ]
 
 [tool.uv]

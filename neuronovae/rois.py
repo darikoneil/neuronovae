@@ -136,7 +136,7 @@ class ROI:
     def weights(self) -> np.ndarray:
         weights = np.zeros(self._image_shape, dtype=float)
         weights.ravel()[self.index] = self._weight / self._weight.max()
-        #np.clip(weights, 0, 1, out=weights)
+        weights /= np.linalg.norm(weights.ravel(), ord=1)
         return weights
 
     @cached_property
