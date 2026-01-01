@@ -7,10 +7,16 @@ from tqdm import tqdm
 
 # FEATURE: Implement export functions for GIF
 def export_gif(path: Path, video: np.ndarray, fps: int = 10) -> None:
-    """Placeholder: export video frames to an animated GIF at `path`.
+    """
+    Placeholder to export video frames to an animated GIF.
 
-    This is a minimal placeholder so GUI can call the function. The user
-    intends to implement the real functionality later.
+    Args:
+        path: Destination path.
+        video: Video frames array.
+        fps: Frame rate.
+
+    Note:
+        This is a minimal placeholder to allow GUI integration.
     """
     # TODO: Implement GIF export
     return
@@ -18,10 +24,15 @@ def export_gif(path: Path, video: np.ndarray, fps: int = 10) -> None:
 
 # FEATURE: Implement export functions for images
 def export_image(path: Path, video: np.ndarray) -> None:
-    """Placeholder: export video frames to a PNG sequence under `path`.
+    """
+    Placeholder to export video frames to a PNG sequence.
 
-    This is a minimal placeholder so GUI can call the function. The user
-    intends to implement the real functionality later.
+    Args:
+        path: Destination directory.
+        video: Video frames array.
+
+    Note:
+        This is a minimal placeholder to allow GUI integration.
     """
     # TODO: Implement PNG sequence export
     return
@@ -29,18 +40,18 @@ def export_image(path: Path, video: np.ndarray) -> None:
 
 def export_video(path: Path, video: np.ndarray, fps: int = 30) -> None:
     """
-    Exports a video to the specified file path in H.264 format.
+    Export a video to disk using H.264 encoding.
 
-    :param path: The file path where the video will be saved.
-    :param video: A numpy array representing the video frames, with shape (frames, height, width, channels).
-    :param fps: The frame rate of the video (default is 30).
-    :return: None
-    :raises ValueError: If the video array has an invalid shape.
-    :warns: Ensure the file path has write permissions.
-    :example:
-        export_video(Path("output.mp4"), np.random.randint(0, 255, (100, 720, 1280, 3), dtype=np.uint8), fps=24)
-    :note: The video frames must be in RGB format.
-    :attention: This function requires the `av` library to be installed.
+    Args:
+        path: File path where the video will be written.
+        video: Numpy array of frames with shape (frames, height, width, channels).
+        fps: Frames per second (default 30).
+
+    Raises:
+        ValueError: If the video array shape is invalid.
+
+    Note:
+        Frames must be in RGB format. Requires the 'av' library.
     """
     frames, height, width = video.shape[:3]
     container = av.open(path, mode="w")

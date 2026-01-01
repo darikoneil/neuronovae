@@ -3,9 +3,10 @@ from os import PathLike
 
 class FileFormatError(ValueError):
     """
-    Exception raised when the input file is not in the expected format.
+    Raised when an input file is not in the expected format.
 
-    :param file: The file that caused the error.
+    Args:
+        file: The path-like object that caused the error.
     """
 
     def __init__(self, file: str | PathLike):
@@ -15,9 +16,10 @@ class FileFormatError(ValueError):
 
 class RBGFormatError(ValueError):
     """
-    Exception raised when the input video frame is not in RBG format.
+    Raised when a video frame is not in RGB format.
 
-    :param shape: The shape of the video frame that caused the error.
+    Args:
+        shape: The shape of the offending array.
     """
 
     def __init__(self, shape: tuple[int, ...]):
@@ -27,9 +29,10 @@ class RBGFormatError(ValueError):
 
 class PickleWarning(RuntimeWarning):
     """
-    Warning raised when loading pickled files.
+    Warning about loading pickled files.
 
-    :param msg: Optional custom warning message.
+    Args:
+        msg: Optional custom warning message. A safety note will be appended.
     """
 
     def __init__(self, msg: str | None = None):

@@ -15,15 +15,19 @@ from neuronovae.rois import ROI
 @dataclass(config=ConfigDict(validate_assignment=True, arbitrary_types_allowed=True))
 class Dataset:
     """
-    Represents a dataset containing images, ROIs, and color instructions.
+    Container for images, ROIs, and color instructions.
 
-    :param images: A numpy array representing the images (2D or 3D).
-    :param rois: A list of ROI objects.
-    :param instructions: A list of color instructions for the dataset.
-    :param scaling: A tuple representing the scaling percentiles.
-    :param chunk_size: The number of frames per chunk, or None if not specified.
-    :raises ValueError: If validation checks fail for images, instructions, or ROIs.
-    :example:
+    Args:
+        images: Numpy array of images (2D image or 3D stack).
+        rois: List of ROI objects.
+        instructions: List of ColorInstruction objects.
+        scaling: Tuple of percentiles for baseline/bound (default (10.0, 90.0)).
+        chunk_size: Frames per chunk or None.
+
+    Raises:
+        ValueError: If validation checks fail.
+
+    Example:
         dataset = Dataset(
             images=np.random.rand(10, 256, 256),
             rois=[ROI(...)],
@@ -31,8 +35,6 @@ class Dataset:
             scaling=(10.0, 90.0),
             chunk_size=5
         )
-    :note: This class uses Pydantic for validation and supports assignment validation.
-    :attention: Ensure that the images, ROIs, and instructions conform to the expected formats.
     """
 
     images: np.ndarray = Field(title="Images")
@@ -54,11 +56,16 @@ class Dataset:
     @classmethod
     def check_images_ndim(cls, v: np.ndarray) -> np.ndarray:
         """
-        Validates the number of dimensions of the images.
+        Ensure images are 2D or 3D.
 
-        :param v: The numpy array of images.
-        :return: The validated numpy array.
-        :raises ValueError: If the images are not 2D or 3D.
+        Args:
+            v: Images array.
+
+        Returns:
+            numpy.ndarray: The validated images.
+
+        Raises:
+            ValueError: If images are not 2D or 3D.
         """
         if not 1 < v.ndim < 4:
             msg = "Images must be 2D (Y, X) or 3D (Frame, Y, X) numpy arrays."
@@ -69,10 +76,13 @@ class Dataset:
     @classmethod
     def coerce_instructions_to_list(cls, v: Any) -> list[Any]:
         """
-        Ensures that the instructions are in a list format.
+        Coerce a single ColorInstruction into a list.
 
-        :param v: The input instructions.
-        :return: The instructions as a list.
+        Args:
+            v: Input instructions value.
+
+        Returns:
+            list: Instructions as a list.
         """
         if isinstance(v, ColorInstruction):
             return [v]
@@ -81,10 +91,13 @@ class Dataset:
     @model_validator(mode="after")
     def check_instruction_indices(self) -> "Dataset":
         """
-        Validates that instruction indices are within the bounds of the ROIs.
+        Validate that instruction indices are within ROI bounds.
 
-        :return: The validated Dataset object.
-        :raises ValueError: If any instruction indices are out of bounds.
+        Returns:
+            Dataset: Self if valid.
+
+        Raises:
+            ValueError: If any instruction indices are out of bounds.
         """
         num_rois = len(self.rois)
         for instruction in self.instructions:
@@ -96,10 +109,13 @@ class Dataset:
     @model_validator(mode="after")
     def check_rois_in_bounds(self) -> "Dataset":
         """
-        Validates that ROI indices are within the bounds of the images.
+        Validate that ROI pixel indices are within image bounds.
 
-        :return: The validated Dataset object.
-        :raises ValueError: If any ROI indices are out of image bounds.
+        Returns:
+            Dataset: Self if valid.
+
+        Raises:
+            ValueError: If any ROI indices are out of image bounds.
         """
         bounds = self.images.shape[-2] * self.images.shape[-1]
         for roi in self.rois:
@@ -111,26 +127,26 @@ class Dataset:
 
 def validate_dataset(func: Callable) -> Callable:
     """
-    Decorator to validate dataset parameters before passing them to the function.
+    Decorator that validates dataset-like arguments using Dataset dataclass.
 
-    :param func: The function to decorate.
-    :return: The decorated function.
-    :example:
-        @validate_dataset
-        def process_dataset(images, rois, instructions, scaling, chunk_size):
-            ...
-    :note: This decorator uses the Dataset class for validation.
-    :attention: Ensure that the function parameters match the Dataset fields.
+    Args:
+        func: Function to be wrapped.
+
+    Returns:
+        Callable: Wrapped function that validates arguments before calling.
     """
 
     @wraps(func)
     def decorator(*args, **kwargs) -> Callable:
         """
-        Wrapper function for dataset validation.
+        Internal wrapper that binds arguments, validates via Dataset and calls func.
 
-        :param args: Positional arguments for the function.
-        :param kwargs: Keyword arguments for the function.
-        :return: The result of the decorated function.
+        Args:
+            *args: Positional arguments.
+            **kwargs: Keyword arguments.
+
+        Returns:
+            Any: Result of the original function call.
         """
         sig = inspect.signature(func)
         bound_args = sig.bind_partial(*args, **kwargs)
