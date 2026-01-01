@@ -28,6 +28,8 @@ class RBGFormatError(ValueError):
 class PickleWarning(RuntimeWarning):
     """
     Warning raised when loading pickled files.
+
+    :param msg: Optional custom warning message.
     """
 
     def __init__(self, msg: str | None = None):

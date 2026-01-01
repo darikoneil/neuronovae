@@ -10,11 +10,19 @@ __all__ = [
 
 
 class Centroid(NamedTuple):
+    """
+    Represents the centroid of a region of interest (ROI) in a 2D space.
+
+    :param y: The y-coordinate of the centroid.
+    :param x: The x-coordinate of the centroid.
+    :example:
+        centroid = Centroid(y=10.5, x=20.3)
+        print(centroid.y, centroid.x)
+    :note: This class is immutable and inherits from `NamedTuple`.
+    """
+
     y: float
     x: float
-
-
-# DOCME: Centroid
 
 
 def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
@@ -58,13 +66,22 @@ def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
     return Centroid(center_y, center_x)
 
 
-# DOCME: calculate_centroid
-
-
 def calculate_mask(
     pixels: np.ndarray,
     image_shape: tuple[int, int],
 ) -> np.ndarray:
+    """
+    Generates a binary mask for the given pixels within the specified image shape.
+
+    :param pixels: A numpy array of pixel coordinates (N, 2) where N is the number of pixels.
+    :param image_shape: A tuple representing the shape of the image (height, width).
+    :return: A binary mask as a numpy array with the same shape as the image, where True indicates the presence of a pixel.
+    :example:
+        mask = calculate_mask(np.array([[1, 2], [3, 4]]), (5, 5))
+        print(mask)
+    :note: The input pixel coordinates are rounded to the nearest integer.
+    :attention: Ensure that the pixel coordinates are within the bounds of the image shape to avoid indexing errors.
+    """
     mask = np.zeros(image_shape, dtype=bool)
     int_y = np.round(pixels[:, 0]).astype(np.intp)
     int_x = np.round(pixels[:, 1]).astype(np.intp)
@@ -72,47 +89,97 @@ def calculate_mask(
     return mask
 
 
-# DOCME: calculate_mask
-
-
 def flatten_index(shape: tuple[int, ...], indices: np.ndarray) -> int:
+    """
+    Flattens multi-dimensional indices into a single-dimensional index.
+
+    :param shape: The shape of the multi-dimensional array.
+    :param indices: A numpy array of indices with shape (N, D), where N is the number of indices and D is the dimensionality.
+    :return: A single-dimensional index corresponding to the input indices.
+    :raises ValueError: If the indices are out of bounds for the given shape.
+    :example:
+        flatten_index((3, 3), np.array([[0, 1], [2, 2]]))
+    :note: This function uses numpy's `ravel_multi_index` for the conversion.
+    :attention: Ensure that the indices are within the bounds of the provided shape to avoid errors.
+    """
     return np.ravel_multi_index([indices[:, dim] for dim in range(len(shape))], shape)
-
-
-# DOCME: flatten_index
 
 
 def identify_vertices(
     pixels: np.ndarray,
 ) -> np.ndarray:
+    """
+    Identifies the vertices of the convex hull for a given set of pixels.
+
+    :param pixels: A numpy array of pixel coordinates (N, 2) where N is the number of pixels.
+    :return: A numpy array of pixel coordinates corresponding to the vertices of the convex hull.
+    :example:
+        vertices = identify_vertices(np.array([[0, 0], [1, 1], [2, 0]]))
+        print(vertices)
+    :note: The input pixels should be in a 2D space.
+    :attention: Ensure that the input array contains at least three points to form a convex hull.
+    """
     hull = ConvexHull(pixels)
     return pixels[hull.vertices, ...]
 
 
-# DOCME: identify_vertices
-
-
 class ROI:
+    """
+    Represents a Region of Interest (ROI) in an image.
+
+    :param pixels: A numpy array of pixel coordinates (N, 2) representing the ROI.
+    :param weight: A numpy array of weights corresponding to the pixels.
+    :param image_shape: A tuple representing the shape of the image (height, width).
+    :example:
+        roi = ROI(pixels=np.array([[1, 2], [3, 4]]), weight=np.array([0.5, 0.5]), image_shape=(5, 5))
+        print(roi)
+    :note: The ROI class provides cached properties for centroid, mask, weights, and vertices.
+    :attention: Ensure that the pixel coordinates and weights are valid and correspond to the image shape.
+    """
+
     def __init__(
         self,
         pixels: np.ndarray,
         weight: np.ndarray,
         image_shape: tuple[int, int],
     ):
+        """
+        Initializes the ROI object.
+
+        :param pixels: A numpy array of pixel coordinates (N, 2) representing the ROI.
+        :param weight: A numpy array of weights corresponding to the pixels.
+        :param image_shape: A tuple representing the shape of the image (height, width).
+        """
         self._pixels = pixels
         self._weight = weight
         self._image_shape = image_shape
 
     def __str__(self) -> str:
+        """
+        Returns a string representation of the ROI.
+
+        :return: A string in the format "ROI (y:centroid_y, x:centroid_x)".
+        """
         return f"ROI (y:{self.centroid[0]}, x:{self.centroid[1]})"
 
     def __repr__(self) -> str:
+        """
+        Returns a detailed string representation of the ROI.
+
+        :return: A string in the format "ROI(y=centroid_y, x=centroid_x, image_shape=image_shape)".
+        """
         return (
             f"ROI(y={self.centroid[0]}, x={self.centroid[1]}, "
             f"image_shape={self._image_shape})"
         )
 
     def __eq__(self, other: object) -> bool:
+        """
+        Checks equality between two ROI objects.
+
+        :param other: Another object to compare with.
+        :return: True if the objects are equal, False otherwise.
+        """
         if not isinstance(other, ROI):
             return False
         # NOTE: int is used to mitigate floating point precision issues
@@ -123,6 +190,11 @@ class ROI:
         )
 
     def __hash__(self) -> int:
+        """
+        Returns a hash value for the ROI object.
+
+        :return: An integer hash value.
+        """
         return hash(
             (
                 int(self.centroid[0]),
@@ -137,18 +209,38 @@ class ROI:
 
     @cached_property
     def centroid(self) -> Centroid:
+        """
+        Calculates and caches the centroid of the ROI.
+
+        :return: The centroid as a Centroid object.
+        """
         return calculate_centroid(self.vertices)
 
     @cached_property
     def index(self) -> np.ndarray:
+        """
+        Calculates and caches the flattened indices of the ROI pixels.
+
+        :return: A numpy array of flattened indices.
+        """
         return flatten_index(self._image_shape, self._pixels)
 
     @cached_property
     def mask(self) -> np.ndarray:
+        """
+        Generates and caches a binary mask for the ROI.
+
+        :return: A binary mask as a numpy array with the same shape as the image.
+        """
         return calculate_mask(self._pixels, self._image_shape)
 
     @cached_property
     def weights(self) -> np.ndarray:
+        """
+        Calculates and caches the normalized weights for the ROI.
+
+        :return: A numpy array of normalized weights with the same shape as the image.
+        """
         weights = np.zeros(self._image_shape, dtype=float)
         weights.ravel()[self.index] = self._weight / self._weight.max()
         weights /= np.linalg.norm(weights.ravel(), ord=1)
@@ -156,7 +248,9 @@ class ROI:
 
     @cached_property
     def vertices(self) -> np.ndarray:
+        """
+        Identifies and caches the vertices of the convex hull for the ROI.
+
+        :return: A numpy array of pixel coordinates corresponding to the vertices of the convex hull.
+        """
         return identify_vertices(self._pixels)
-
-
-# DOCME: ROI

@@ -1,9 +1,40 @@
 site_name: neuronovae
 site_url: https://readthedocs.org/neuronovae/
+repo_name: GitHub
+repo_url: https://github.com/darikoneil/neuronovae
+site_author: Darik A. O'Neil
+
 theme:
+  name: material
   features:
     - header.autohide
-  name: material
+    - navigation.sections
+  font:
+    text: Lexend
+    code: Fira Mono
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: deep purple
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to auto mode
+
+extra_css:
+- css/mkdocstrings.css
+
 plugins:
   - search
   - tags
@@ -11,10 +42,48 @@ plugins:
       handlers:
         python:
           theme: material
+          inventories:
+            - https://docs.python.org/3/objects.inv
+            - https://numpy.org/doc/stable/objects.inv
+            - https://matplotlib.org/stable/objects.inv
+          options:
+            docstring_style: google
+            docstring_section_style: list
+            allow_inspection: true
+            annotations_path: source
+            show_bases: true
+            heading_level: 2
+            show_symbol_type_heading: true
+            type_parameter_headings: true
+            extensions:
+              - griffe_pydantic:
+                  schema: true
+              - griffe_inherited_docstrings:
+                    merge: true
+              - griffe_sphinx
+              - griffe_autodocstringstyle
 
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+    - Home: index.md
+    - Installation: installation.md
+    - Usage:
+        - Examples: usage/examples.md
+    - API:
+        - cmapping: api/cmapping.md
+        - colorize: api/colorize.md
+        - dataset: api/dataset.md
+        - exporter: api/export.md
+        - gui: api/gui.md
+        - issues: api/issues.md
+        - loaders: api/loaders.md
+        - rois: api/rois.md
