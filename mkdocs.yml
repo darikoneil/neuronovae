@@ -4,12 +4,25 @@ repo_name: GitHub
 repo_url: https://github.com/darikoneil/neuronovae
 site_author: Darik A. O'Neil
 
+nav:
+  - Welcome: index.md
+  - Installation: installation.md
+  - Theory: theory.md
+  - Quickstart: quickstart.md
+  - Usage:
+      - usage/visualization.md
+      - usage/FAQ.md
+  - Examples:
+      - examples/example.md
+
 theme:
   name: material
+  custom_dir: overrides
   features:
     - header.autohide
     - navigation.sections
     - navigation.indexes
+    - navigation.footer
     - toc.integrate
   font:
     text: Lexend
@@ -21,8 +34,8 @@ theme:
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: deep purple
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
@@ -35,11 +48,12 @@ theme:
         name: Switch to auto mode
 
 extra_css:
-- css/mkdocstrings.css
+  - css/mkdocstrings.css
 
 plugins:
   - search
   - tags
+  - autorefs
   - api-autonav:
         modules: [ neuronovae, ]
         module_options: { }
@@ -87,7 +101,7 @@ plugins:
             allow_inspection: true
             backlinks: tree
             show_bases: true
-            show_source: true
+            show_source: false
             extensions:
               - griffe_pydantic:
                   schema: true
@@ -106,9 +120,3 @@ markdown_extensions:
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-
-nav:
-    - Home: index.md
-    - Installation: installation.md
-    - Usage:
-        - Examples: usage/examples.md

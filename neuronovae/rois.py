@@ -139,9 +139,10 @@ class ROI:
         """
         Initializes the ROI object.
 
-        :param pixels: A numpy array of pixel coordinates (N, 2) representing the ROI.
-        :param weight: A numpy array of weights corresponding to the pixels.
-        :param image_shape: A tuple representing the shape of the image (height, width).
+        Args:
+            pixels: A numpy array of pixel coordinates (N, 2) representing the ROI.
+            weight: A numpy array of weights corresponding to the pixels.
+            image_shape: A tuple representing the shape of the image (height, width).
         """
         self._pixels = pixels
         self._weight = weight

@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import NamedTuple
 
 import numpy as np
@@ -18,23 +19,44 @@ class Color(NamedTuple):
     Represents an RGBA color normalized to the 0-1 range.
 
     Attributes:
-        r: Red channel (0.0-1.0).
-        g: Green channel (0.0-1.0).
-        b: Blue channel (0.0-1.0).
-        a: Alpha channel (0.0-1.0). Defaults to 1.0.
+        r: Red channel
+        g: Green channel
+        b: Blue channel
+        a: Alpha channel
+
+    Note:
+        The alpha channel defaults to 1.0 (fully opaque) if not specified.
     """
 
     r: float
     g: float
     b: float
-    a: float = 1.0
+    a: float
+
+    def __new__(cls, r: float, g: float, b: float, a: float = 1.0):
+        """
+        Create a new Color instance from normalized RGBA values (0.0 to 1.0).
+
+        Args:
+            r: Red channel
+            g: Green channel
+            b: Blue channel
+            a: Alpha channel
+
+        Returns:
+            A new Color instance.
+        """
+        if not all(0.0 <= channel <= 1.0 for channel in (r, g, b, a)):
+            msg = "Color channels must be in the range [0.0, 1.0]"
+            raise ValueError(msg)
+        return super().__new__(cls, (r, g, b, a))
 
     @classmethod
     def from_hex(cls, hex_str: str) -> "Color":
         """
         Create a Color instance from a hexadecimal color string.
 
-        Parameters:
+        Args:
             hex_str: Hexadecimal color string (e.g., "#RRGGBB" or "#RRGGBBAA").
 
         Returns:
@@ -51,7 +73,8 @@ class Color(NamedTuple):
                 int(hex_str[2:4], 16),
                 int(hex_str[4:6], 16),
             )
-            a = 255
+            a = None
+            # NOTE: Leave this as None to avoid hardcoding a default alpha value
         elif length == 8:
             r, g, b, a = (
                 int(hex_str[0:2], 16),
@@ -62,18 +85,20 @@ class Color(NamedTuple):
         else:
             msg = "Hex string must be in the format #RRGGBB or #RRGGBBAA"
             raise ValueError(msg)
-        return cls(r / 255.0, g / 255.0, b / 255.0, a / 255.0)
+        return cls(
+            r / 255.0, g / 255.0, b / 255.0, a / 255.0 if a is not None else None
+        )
 
     @classmethod
     def from_rgba(cls, rgba: tuple[float, float, float, ...]) -> "Color":
         """
-        Create a Color instance from an RGBA tuple with values in 0-255 range.
+        Create a Color instance from an RGB or RGBA tuple with values in 0-255 range.
 
-        Parameters:
+        Args:
             rgba: Tuple of RGBA values (0-255).
 
         Returns:
-            A Color instance representing the given RGBA values.
+            A Color instance representing the given RGB or RGBA values.
 
         Raises:
             ValueError: If the tuple does not have 3 or 4 elements.
@@ -86,22 +111,23 @@ class Color(NamedTuple):
 
 class ColorMap:
     """
-    Represents a colormap for mapping values to colors.
+    Represents a colormap for mapping values to colors. Wraps matplotlib's
+    [`LinearSegmentedColorMap`][matplotlib.colors.LinearSegmentedColormap].
 
     Attributes:
-        colors: Array of Color instances defining the colormap.
-        num_colors: Number of colors in the colormap.
+        colors: Array of Color instances defining each equidistant point in the colormap (inclusive of endpoints).
+        num_colors: The number of colors in the colormap.
         _mapping: LinearSegmentedColormap instance for mapping values.
     """
 
-    def __init__(self, colors: tuple[Color, ...]):
+    def __init__(self, colors: Iterable[Color]):
         """
-        Initialize the ColorMap with a sequence of Color instances.
+        Each color provided defines an equidistant point in the colormap (inclusive of endpoints).
 
-        Parameters:
-            colors: Tuple of Color instances defining the colormap.
+        Args:
+            colors: The colors that define the colormap.
         """
-        self.colors: np.ndarray = np.asarray([Color(*color) for color in colors])
+        self.colors: tuple[Color, ...] = tuple([Color(*color) for color in colors])
         self.num_colors: int = len(colors)
         self._mapping: LinearSegmentedColormap = LinearSegmentedColormap.from_list(
             "custom_colormap", colors
@@ -111,7 +137,7 @@ class ColorMap:
         """
         Map an array of values to their corresponding colors.
 
-        Parameters:
+        Args:
             values: Array of values to map.
 
         Returns:
@@ -138,7 +164,7 @@ class ColorInstruction:
         Retrieve the colormap and indices.
 
         Returns:
-            Tuple containing the colormap and indices.
+            The colormap and indices.
         """
         return self.cmap, self.indices
 
@@ -148,7 +174,7 @@ class ColorInstruction:
         """
         Validate the indices array.
 
-        Parameters:
+        Args:
             v: Array of indices to validate.
 
         Returns:

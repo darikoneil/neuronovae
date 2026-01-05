@@ -14,13 +14,16 @@ if TYPE_CHECKING:
 def rescale(array: np.ndarray, new_min: float, new_max: float) -> np.ndarray:
     """
     Rescales the input array to a new range [new_min, new_max].
-    Parameters:
+
+    Args:
         array: The input numpy array to be rescaled.
         new_min: The minimum value of the new range.
         new_max: The maximum value of the new range.
+
     Returns:
         The rescaled numpy array.
-    Examples:
+
+    Example:
         >>> rescale(np.array([1, 2, 3]), 0, 1)
         array([0. , 0.5, 1. ])
     """
@@ -33,11 +36,13 @@ def normalize(images: np.ndarray) -> np.ndarray:
     """
     Normalizes the input image to the range [0, 1].
 
-    Parameters:
-    :   images: The input numpy array representing images.
+    Args:
+        images: The input numpy array representing images.
+
     Returns:
         The normalized numpy array.
-    Examples:
+
+    Example:
         >>> normalize(np.array([[0, 50], [100, 150]]))
         array([[0.  , 0.333],
                [0.667, 1.   ]])
@@ -58,15 +63,18 @@ def calc_gated_images(
     g(I) = clip(\frac{I - I_{base}}{I_{bound}}, 0, 1)
     $$
 
-    Parameters:
+    Args:
         norm_images: The normalized input images.
         baseline: The baseline intensity values at which colorization starts.
         bound: The upper bound intensity values at which colorization saturates.
+
     Returns:
         The gated images.
+
     Raises:
         ValueError: If the input arrays have mismatched shapes.
-    Examples:
+
+    Example:
         >>> calc_gated_images(
         ...     np.array([[0.2, 0.5], [0.8, 1.0]]),
         ...     np.array([[0.1, 0.3], [0.6, 0.9]]),
@@ -90,14 +98,16 @@ def colorize(
     and color instructions. The function normalizes the images, calculates gated intensities,
     and applies color mappings to generate the final colored images.
 
-    Parameters:
+    Args:
         images: A numpy array of input images to be colorized.
         rois: A list of ROI objects representing regions of interest in the images.
         instructions: A list of ColorInstruction objects specifying how to apply color mappings.
         scaling: A tuple specifying the lower and upper percentiles for baseline and bound intensities.
         chunk_size: The size of chunks to process at a time, or None to process all images at once.
+
     Returns:
         A numpy array of colorized images with RGB channels.
+
     Raises:
         ValueError: If the input arrays have mismatched shapes or invalid data.
     """
