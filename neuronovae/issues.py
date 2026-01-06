@@ -39,16 +39,3 @@ class PickleWarning(RuntimeWarning):
         msg = msg or ""
         msg += "Loading pickled files can be unsafe. Ensure the source is trusted."
         super().__init__(msg)
-
-
-class MissingPyTorchWarning(RuntimeWarning):
-    """
-    Warning about missing PyTorch installation.
-
-    Args:
-        msg: Optional custom warning message. A note about installation will be appended.
-    """
-
-    def __init__(self, func_handle: str = "Function"):
-        msg = func_handle + " requires optional PyTorch dependency. Skipping..."
-        super().__init__(msg)
