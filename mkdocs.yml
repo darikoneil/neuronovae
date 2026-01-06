@@ -99,7 +99,7 @@ plugins:
 #            show_attribute_values: true
             # MISC
             allow_inspection: true
-            backlinks: tree
+            backlinks: false
             show_bases: true
             show_source: false
             extensions:
@@ -120,3 +120,4 @@ markdown_extensions:
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - js/default-value-highlight.js

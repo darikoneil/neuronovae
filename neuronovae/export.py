@@ -41,20 +41,20 @@ def export_video(
     path: Path, video: np.ndarray, fps: int = 30, codec: str = "h264"
 ) -> None:
     """
-   Export video frames to a video file.
+    Export video frames to a video file.
 
-    Args:
-        path: File path where the video will be written.
-        video: Array of frames with shape (frames, height, width, channels).
-        fps: Frames per second.
-        codec: Video codec to use (default "h264"). Refer to [`PyAV`](https://pyav.basswood-io.com/docs/stable/)
-            documentation for supported codecs.
+     Args:
+         path: File path where the video will be written.
+         video: Array of frames with shape (frames, height, width, channels).
+         fps: Frames per second.
+         codec: Video codec to use (default "h264"). Refer to [`PyAV`](https://pyav.basswood-io.com/docs/stable/)
+             documentation for supported codecs.
 
-    Raises:
-        ValueError: If the video array shape is invalid.
+     Raises:
+         ValueError: If the video array shape is invalid.
 
-    Note:
-        Frames must be in RGB format (frames x height x width x channels).
+     Note:
+         Frames must be in RGB format (frames x height x width x channels).
     """
     frames, height, width = video.shape[:3]
     container = av.open(path, mode="w")

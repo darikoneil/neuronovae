@@ -1,18 +1,18 @@
-from collections.abc import Iterable
-# from typing import NamedTuple
+from collections.abc import Iterable, Iterator
 
+# from typing import NamedTuple
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic.config import ConfigDict
 from pydantic.dataclasses import dataclass
-from pydantic import Field
 
 # FEATURE: Add functionality for more complex instructions
 
 """
 Module for standardizing instructions when coloring images.
 """
+
 
 @dataclass(frozen=True)
 class Color:
@@ -34,7 +34,7 @@ class Color:
     b: float = Field(ge=0, le=1.0)
     a: float = Field(default=1.0, ge=0, le=1.0)
 
-    def __iter__(self) -> Iterable[float]:
+    def __iter__(self) -> Iterator[float]:
         """
         Allow unpacking of Color instance into RGBA components.
 

@@ -1,0 +1,108 @@
+
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #009688;
+    --md-code-hl-number-color: #c5595e;
+    --md-code-hl-string-color: #c5595e;
+}
+
+
+
+
+/*!* Change the color of H2 headings *!*/
+/*.md-typeset h2 {*/
+/*  color: #000000;*/
+/*    font-size: xx-large;*/
+/*    font-weight: bolder;*/
+/*    border-bottom-style: solid;*/
+/*    border-bottom-color: #000000;*/
+/*}*/
+
+
+/* Put this into `css/mkdocstrings.css` */
+
+/*!* Change the color of the doc-heading (h5) *!*/
+/*.md-typeset h5.doc.doc-heading {*/
+/*  color: #0b6e4f; !* example: teal *!*/
+/*!*}*!*/
+
+/*!* Make inline highlighted code inside that heading inherit the heading color *!*/
+/*.md-typeset h5.doc.doc-heading code.highlight,*/
+/*.md-typeset h5.doc.doc-heading code {*/
+/*  color: inherit;*/
+/*}*/
+
+/*!* Override specific Pygments token styles inside the heading (method/function name) *!*/
+/*.md-typeset h5.doc.doc-heading code .fm {*/
+/*  color: #7c4dff !important;*/
+/*    font-size: larger*/
+/*}*/
+/*.md-typeset h5.doc.doc-heading code .p {*/
+/*  color: #ffa666 !important;*/
+/*}*/
+
+/*!* css *!*/
+
+/*!* Description block immediately following a doc heading *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc.doc-contents {*/
+/*  color: #555555 !important;    !* description text color *!*/
+/*  font-size: 0.95rem;*/
+/*  line-height: 1.45;*/
+/*}*/
+
+/*!* More specific: the explanatory text container *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents .doc-md-description,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc.doc-contents .doc-md-description {*/
+/*  color: #555555 !important;*/
+/*}*/
+
+/*!* Section titles like "Returns:" *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents .doc-section-title,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc.doc-contents .doc-section-title {*/
+/*  color: #0b6e4f !important;    !* e.g. teal for the section title *!*/
+/*  font-weight: 600;*/
+/*}*/
+
+/*!* Section item body (the paragraph under the list item) *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents .doc-section-item .doc-md-description,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc.doc-contents .doc-section-item .doc-md-description {*/
+/*  color: #666666 !important;*/
+/*}*/
+
+/*!* Inline code and highlighted tokens inside that description *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents code,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc.doc-contents code {*/
+/*  color: #c5595e !important;    !* inline code color *!*/
+/*}*/
+
+/*!* Optional: target specific Pygments token classes inside the description *!*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents code .n,*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents code .s,*/
+/*.md-typeset h5.doc.doc-heading + .doc.doc-contents code .err {*/
+/*  color: inherit !important;*/
+/*}*/
+
+/*.md-typeset h5.doc.doc-heading + p,*/
+/*.md-typeset h5.doc.doc-heading + .docstring,*/
+/*.md-typeset h5.doc.doc-heading + .doc-block,*/
+/*.md-typeset h5.doc.doc-heading ~ p,*/
+/*.md-typeset h5.doc.doc-heading ~ .docstring,*/
+/*.md-typeset h5.doc.doc-heading ~ .doc-block {*/
+/*  color: #119fff; !* description text color (example: dark gray) *!*/
+/*  font-size: 0.95rem;*/
+/*  line-height: 1.4;*/
+/*}*/
+
+/*.md-typeset h5.doc.doc-heading + p code,*/
+/*.md-typeset h5.doc.doc-heading ~ p code,*/
+/*.md-typeset h5.doc.doc-heading + .docstring code,*/
+/*.md-typeset h5.doc.doc-heading ~ .docstring code {*/
+/*  color: #c5595e; !* inline code color (example) *!*/
+/*}*/
+
+/*!* Optional: target specific Pygments token classes inside the description *!*/
+/*.md-typeset h5.doc.doc-heading + p code .n,*/
+/*.md-typeset h5.doc.doc-heading + p code .s,*/
+/*.md-typeset h5.doc.doc-heading + p code .err {*/
+/*  color: inherit;*/
+/*}*/

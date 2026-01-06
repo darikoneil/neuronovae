@@ -16,4 +16,6 @@ color_one = Color.from_rgba(197, 89, 94)
 color_map = ColorMap(colors=[color_background, color_one])
 instruction = ColorInstruction(cmap=color_map, indices=np.arange(len(rois)))
 colored = colorize(images, rois, instruction, scaling=[1, 99.0], chunk_size=50)
-export_video(Path(R"C:\Users\doneil\Desktop\example_output.mp4"), colored, fps=30, codec="h264")
+export_video(
+    Path(R"C:\Users\doneil\Desktop\example_output.mp4"), colored, fps=30, codec="h264"
+)

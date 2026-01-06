@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -16,8 +17,8 @@ def assets_path() -> Path:
     return Path(Path(__file__).parent).joinpath("assets")
 
 
-@pytest.fixture(scope="function")
-def image_case(request) -> tuple[Path, np.ndarray]:
+@pytest.fixture
+def image_case(request: dict[str, Any]) -> tuple[Path, np.ndarray]:
     (dimensions, file_extension) = request.param
     match dimensions:
         case 2:
@@ -26,6 +27,7 @@ def image_case(request) -> tuple[Path, np.ndarray]:
             )
             reference = np.load(filename, allow_pickle=False)
         case _:
-            raise ValueError("Invalid dimensions")
+            msg = f"Invalid dimensions: {dimensions}"
+            raise ValueError(msg)
     # noinspection PyUnboundLocalVariable
     return filename, reference
