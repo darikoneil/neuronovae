@@ -1,11 +1,12 @@
 from collections.abc import Iterable
-from typing import NamedTuple
+# from typing import NamedTuple
 
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from pydantic import field_validator
 from pydantic.config import ConfigDict
 from pydantic.dataclasses import dataclass
+from pydantic import Field
 
 # FEATURE: Add functionality for more complex instructions
 
@@ -13,8 +14,8 @@ from pydantic.dataclasses import dataclass
 Module for standardizing instructions when coloring images.
 """
 
-
-class Color(NamedTuple):
+@dataclass(frozen=True)
+class Color:
     """
     Represents an RGBA color normalized to the 0-1 range.
 
@@ -28,28 +29,28 @@ class Color(NamedTuple):
         The alpha channel defaults to 1.0 (fully opaque) if not specified.
     """
 
-    r: float
-    g: float
-    b: float
-    a: float
+    r: float = Field(ge=0, le=1.0)
+    g: float = Field(ge=0, le=1.0)
+    b: float = Field(ge=0, le=1.0)
+    a: float = Field(default=1.0, ge=0, le=1.0)
 
-    def __new__(cls, r: float, g: float, b: float, a: float = 1.0):
+    def __iter__(self) -> Iterable[float]:
         """
-        Create a new Color instance from normalized RGBA values (0.0 to 1.0).
-
-        Args:
-            r: Red channel
-            g: Green channel
-            b: Blue channel
-            a: Alpha channel
+        Allow unpacking of Color instance into RGBA components.
 
         Returns:
-            A new Color instance.
+            An iterator over the RGBA components.
         """
-        if not all(0.0 <= channel <= 1.0 for channel in (r, g, b, a)):
-            msg = "Color channels must be in the range [0.0, 1.0]"
-            raise ValueError(msg)
-        return super().__new__(cls, (r, g, b, a))
+        return iter((self.r, self.g, self.b, self.a))
+
+    def __len__(self) -> int:
+        """
+        Return the number of components in the Color instance.
+
+        Returns:
+            The number of components (4 for RGBA).
+        """
+        return 4
 
     @classmethod
     def from_hex(cls, hex_str: str) -> "Color":
@@ -90,12 +91,15 @@ class Color(NamedTuple):
         )
 
     @classmethod
-    def from_rgba(cls, rgba: tuple[float, float, float, ...]) -> "Color":
+    def from_rgba(cls, r: float, g: float, b: float, a: float = 255.0) -> "Color":
         """
         Create a Color instance from an RGB or RGBA tuple with values in 0-255 range.
 
         Args:
-            rgba: Tuple of RGBA values (0-255).
+            r: Red channel
+            g: Green channel
+            b: Blue channel
+            a: Alpha channel
 
         Returns:
             A Color instance representing the given RGB or RGBA values.
@@ -103,10 +107,7 @@ class Color(NamedTuple):
         Raises:
             ValueError: If the tuple does not have 3 or 4 elements.
         """
-        if not 3 <= len(rgba) <= 4:
-            msg = "RGBA tuple must have 3 or 4 elements."
-            raise ValueError(msg)
-        return cls(*(channel / 255.0 for channel in rgba))
+        return cls(*(channel / 255.0 for channel in (r, g, b, a)))
 
 
 class ColorMap:
