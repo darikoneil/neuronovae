@@ -74,6 +74,8 @@ plugins:
           options:
             # DOCSTRINGS
             docstring_style: google
+            filters:
+                - "!__all__"
             docstring_section_style: list
             # CROSS-REF
             relative_crossrefs: true

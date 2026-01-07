@@ -12,12 +12,6 @@ from neuronovae.rois import ROI
 
 __all__ = ["ROIHandler", "Suite2PHandler", "load_images", "load_rois"]
 
-"""
-|=======================================================================================|
-|DISPATCHING & REGISTRY OF IMAGING LOADERS
-|=======================================================================================|
-"""
-
 
 @runtime_checkable
 class ImagingLoader(Protocol):
@@ -185,13 +179,6 @@ def load_images(file: str | PathLike) -> np.ndarray:
         raise FileFormatError(file)
 
     return loader(file)
-
-
-"""
-|=======================================================================================|
-|DISPATCHING & REGISTRY OF ROI HANDLERS
-|=======================================================================================|
-"""
 
 
 @runtime_checkable

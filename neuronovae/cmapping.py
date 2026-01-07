@@ -1,6 +1,5 @@
 from collections.abc import Iterable, Iterator
 
-# from typing import NamedTuple
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 from pydantic import Field, field_validator
@@ -8,6 +7,13 @@ from pydantic.config import ConfigDict
 from pydantic.dataclasses import dataclass
 
 # FEATURE: Add functionality for more complex instructions
+
+__all__ = [
+    "Color",
+    "ColorInstruction",
+    "ColorMap",
+]
+
 
 """
 Module for standardizing instructions when coloring images.
@@ -142,7 +148,7 @@ class ColorMap:
             values: Array of values to map.
 
         Returns:
-            values: Array of mapped colors.
+            Array of mapped colors.
         """
         return self._mapping(values)
 

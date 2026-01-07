@@ -1,12 +1,20 @@
 from functools import cached_property
-from typing import NamedTuple
+from typing import Literal, NamedTuple
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.spatial import ConvexHull
 
 __all__ = [
     "ROI",
 ]
+
+
+#: Alias for a flattened index array
+FlatIndex = np.ndarray[tuple[Literal[1]], np.intp]
+
+#: Alias for a 2D index of pixels
+Pixels = np.ndarray[tuple[int, Literal[2]], np.intp]
 
 
 class Centroid(NamedTuple):
@@ -22,12 +30,12 @@ class Centroid(NamedTuple):
     x: float
 
 
-def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
+def calculate_centroid(rc_vertices: Pixels) -> Centroid:
     """
     Calculate centroid of a polygonal ROI using the shoelace formula.
 
     Args:
-        rc_vertices: Vertices array of shape (N, 2) or 1D array.
+        rc_vertices: numpy array of shape (N, 2) indexing the vertices of the roi
 
     Returns:
         Centroid: The polygon centroid.
@@ -63,34 +71,35 @@ def calculate_centroid(rc_vertices: np.ndarray) -> Centroid:
     return Centroid(center_y, center_x)
 
 
+# TODO: Refine me
+
+
 def calculate_mask(
-    pixels: np.ndarray,
+    index: FlatIndex,
     image_shape: tuple[int, int],
 ) -> np.ndarray:
     """
     Create a binary mask for given pixel coordinates.
 
     Args:
-        pixels: Array of pixel coordinates (N, 2).
+        index: A flat indexing array of pixel coordinates.
         image_shape: (height, width) of the image.
 
     Returns:
-        numpy.ndarray: Boolean mask with True where pixels are located.
+        Boolean mask indicating which pixels belong to the ROI.
     """
     mask = np.zeros(image_shape, dtype=bool)
-    int_y = np.round(pixels[:, 0]).astype(np.intp)
-    int_x = np.round(pixels[:, 1]).astype(np.intp)
-    mask[int_y, int_x] = True
+    mask.ravel()[index] = True
     return mask
 
 
-def flatten_index(shape: tuple[int, ...], indices: np.ndarray) -> int:
+def flatten_index(shape: tuple[int, ...], indices: Pixels) -> int:
     """
     Convert multi-dimensional coordinates to flat indices.
 
     Args:
-        shape: Array shape.
-        indices: Coordinates array with shape (N, D).
+        shape: Shape of the source array.
+        indices: A 2D array of pixel coordinates (N, D).
 
     Returns:
         int: Flattened indices.
@@ -102,16 +111,19 @@ def flatten_index(shape: tuple[int, ...], indices: np.ndarray) -> int:
 
 
 def identify_vertices(
-    pixels: np.ndarray,
-) -> np.ndarray:
+    pixels: Pixels,
+) -> Pixels:
     """
     Compute convex-hull vertices for a set of pixels.
 
     Args:
-        pixels: Array of pixel coordinates (N, 2).
+        pixels: A numpy array of pixel coordinates (N, 2).
 
     Returns:
-        numpy.ndarray: Coordinates corresponding to convex hull vertices.
+        The pixels corresponding to convex hull vertices.
+
+    Note:
+        See the [`Pixels`][] type alias for explicit typing information.
     """
     hull = ConvexHull(pixels)
     return pixels[hull.vertices, ...]
@@ -124,15 +136,15 @@ class ROI:
     Args:
         pixels: Array of pixel coordinates (N, 2).
         weight: Array of per-pixel weights.
-        image_shape: Tuple (height, width).
+        image_shape: the shape of the image (height, width).
 
-    Properties:
-        centroid, index, mask, weights, vertices are cached for performance.
+    Warning:
+        centroid, index, mask, weights, vertices are calculated *once* for performance.
     """
 
     def __init__(
         self,
-        pixels: np.ndarray,
+        pixels: Pixels,
         weight: np.ndarray,
         image_shape: tuple[int, int],
     ):
@@ -140,7 +152,7 @@ class ROI:
         Initializes the ROI object.
 
         Args:
-            pixels: A numpy array of pixel coordinates (N, 2) representing the ROI.
+            pixels: A numpy array of [`Pixels`][] (N, 2) representing the ROI.
             weight: A numpy array of weights corresponding to the pixels.
             image_shape: A tuple representing the shape of the image (height, width).
         """
@@ -218,7 +230,7 @@ class ROI:
         return calculate_centroid(self.vertices)
 
     @cached_property
-    def index(self) -> np.ndarray:
+    def index(self) -> FlatIndex:
         """
         Compute and cache flattened indices for ROI pixels.
 
@@ -228,17 +240,17 @@ class ROI:
         return flatten_index(self._image_shape, self._pixels)
 
     @cached_property
-    def mask(self) -> np.ndarray:
+    def mask(self) -> NDArray[bool]:
         """
         Compute and cache binary mask for the ROI.
 
         Returns:
             numpy.ndarray: Boolean mask.
         """
-        return calculate_mask(self._pixels, self._image_shape)
+        return calculate_mask(self.index, self._image_shape)
 
     @cached_property
-    def weights(self) -> np.ndarray:
+    def weights(self) -> NDArray[float]:
         """
         Compute and cache normalized weights array for the ROI.
 
@@ -251,7 +263,7 @@ class ROI:
         return weights
 
     @cached_property
-    def vertices(self) -> np.ndarray:
+    def vertices(self) -> Pixels:
         """
         Compute and cache convex hull vertices for the ROI.
 

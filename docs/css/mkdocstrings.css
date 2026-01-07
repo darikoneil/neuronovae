@@ -5,13 +5,17 @@
     --md-code-hl-string-color: #c5595e;
     --md-category-headings-color: #000000;
     --md-doc-heading-color: #000000;
+    --md-doc-heading-bg-color: rgba(161, 215, 255, 0.75);
     --md-doc-heading-fm: #000000;
     --md-doc-heading-p: #000000;
     --md-doc-desc-color: #000000;
     --md-section-title-color: #000000;
     --md-section-desc-color: #000000;
     --md-inline-code-color: #000000;
+    --md-code-bg-color: transparent;
+    --md-admon-code-bg-color: rgba(228, 228, 228, 0.50);
     --md-default-value-color: #c5595e;
+    --md-heading-bottom-border-color: #000000;
 }
 
 /* Change the color of category headings */
@@ -20,7 +24,7 @@
     font-size: xx-large;
     font-weight: bolder;
     border-bottom-style: solid;
-    border-bottom-color: #000000;
+    border-bottom-color: var(--md-heading-bottom-border-color);
 }
 
 /*!* I don't know what this is *!*/
@@ -28,6 +32,7 @@
   color: var(--md-doc-heading-color);
 }
 
+/* Make inline highlighted code inside that heading inherit the heading colo */
 .md-typeset h5.doc.doc-heading code.highlight,
 .md-typeset h5.doc.doc-heading code {
   color: inherit;
@@ -41,6 +46,18 @@
   color: var(--md-doc-heading-p) !important;
 }
 
+/* Styling for upper headings like class names or loose function names */
+.md-typeset h3.doc.doc-heading code.highlight {
+    background-color: transparent;
+}
+
+.md-typeset h3.doc.doc-heading {
+    color: var(--md-doc-heading-color) !important;
+    background-color: var(--md-doc-heading-bg-color) !important;
+    font-size: larger !important;
+    font-weight: bolder !important;
+}
+
 /*!* Description blocks under the heading *!*/
 .md-typeset h5.doc.doc-heading + .doc.doc-contents,
 .md-typeset h5.doc.doc-heading ~ .doc.doc-contents {
@@ -48,6 +65,8 @@
   font-size: 0.6rem;
   line-height: 1.45;
 }
+
+/*!* More specific: the explanatory text container *!*/
 .md-typeset h5.doc.doc-heading + .doc.doc-contents .doc-md-description,
 .md-typeset h5.doc.doc-heading ~ .doc.doc-contents .doc-md-description {
   color: var(--md-doc-desc-color) !important;
@@ -66,8 +85,6 @@
   color: var(--md-section-desc-color) !important;
 }
 
-/*!* Inline code inside the description *!*/
-.md-typeset h5.doc.doc-heading + .doc.doc-contents code,
-.md-typeset h5.doc.doc-heading ~ .doc.doc-contents code {
-  color: var(--md-inline-code-color) !important;
+.md-typeset .doc.doc-contents .highlight pre code {
+    background-color: var(--md-admon-code-bg-color) !important;
 }

@@ -5,36 +5,9 @@ import numpy as np
 from tqdm import tqdm
 
 # FEATURE: Implement export functions for GIF
-# def export_gif(path: Path, video: np.ndarray, fps: int = 10) -> None:
-#     """
-#     Placeholder to export video frames to an animated GIF.
-#
-#     Args:
-#         path: Destination path.
-#         video: Video frames array.
-#         fps: Frame rate.
-#
-#     Note:
-#         This is a minimal placeholder to allow GUI integration.
-#     """
-#     # TODO: Implement GIF export
-#     return
 
 
 # FEATURE: Implement export functions for images
-# def export_image(path: Path, video: np.ndarray) -> None:
-#     """
-#     Placeholder to export video frames to a PNG sequence.
-#
-#     Args:
-#         path: Destination directory.
-#         video: Video frames array.
-#
-#     Note:
-#         This is a minimal placeholder to allow GUI integration.
-#     """
-#     # TODO: Implement PNG sequence export
-#     return
 
 
 def export_video(

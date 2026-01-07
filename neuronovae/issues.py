@@ -6,7 +6,7 @@ class FileFormatError(ValueError):
     Raised when an input file is not in the expected format.
 
     Args:
-        file: The path-like object that caused the error.
+        file: The (ideally) path-like object that caused the error.
     """
 
     def __init__(self, file: str | PathLike):
@@ -16,7 +16,7 @@ class FileFormatError(ValueError):
 
 class RBGFormatError(ValueError):
     """
-    Raised when a video frame is not in RGB format.
+    Raised when a presumed video frame is not in RGB format.
 
     Args:
         shape: The shape of the offending array.

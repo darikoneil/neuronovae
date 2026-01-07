@@ -24,8 +24,10 @@ def rescale(array: np.ndarray, new_min: float, new_max: float) -> np.ndarray:
         The rescaled numpy array.
 
     Example:
+        ```python
         >>> rescale(np.array([1, 2, 3]), 0, 1)
         array([0. , 0.5, 1. ])
+        ```
     """
     old_min = np.nanmin(array)
     old_max = np.nanmax(array)
@@ -43,9 +45,11 @@ def normalize(images: np.ndarray) -> np.ndarray:
         The normalized numpy array.
 
     Example:
+        ```python
         >>> normalize(np.array([[0, 50], [100, 150]]))
         array([[0.  , 0.333],
                [0.667, 1.   ]])
+        ```
     """
     return rescale(images, 0, 1)
 
@@ -75,12 +79,14 @@ def calc_gated_images(
         ValueError: If the input arrays have mismatched shapes.
 
     Example:
+        ```python
         >>> calc_gated_images(
         ...     np.array([[0.2, 0.5], [0.8, 1.0]]),
         ...     np.array([[0.1, 0.3], [0.6, 0.9]]),
         ...     np.array([[0.5, 0.7], [0.9, 1.1]]),
         ... )
         array([[0.2, 0.286], [0.222, 0.091]])
+        ```
     """
     return norm_images * np.clip((norm_images - baseline) / bound, 0, 1)
 

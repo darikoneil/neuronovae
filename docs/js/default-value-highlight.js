@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     style.id = 'md-default-value-style';
     style.textContent = `
 .md-default-value {
-  color: var(--md-default-value-color, #c5595e) !important;
-  font-weight: 600;
+  color: var(--md-default-value-color) !important;
 }
 `;
     document.head.appendChild(style);

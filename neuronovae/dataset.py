@@ -28,6 +28,7 @@ class Dataset:
         ValueError: If validation checks fail.
 
     Example:
+        ```python
         dataset = Dataset(
             images=np.random.rand(10, 256, 256),
             rois=[ROI(...)],
@@ -35,6 +36,7 @@ class Dataset:
             scaling=(10.0, 90.0),
             chunk_size=5
         )
+        ```
     """
 
     images: np.ndarray = Field(title="Images")
