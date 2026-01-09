@@ -1,39 +1,33 @@
-import sys
-from os import devnull
+from pathlib import Path
+from typing import Any
+
+import numpy as np
 import pytest
 
-
-"""
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION FOR TESTING
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-"""
+IMAGE_2D = "dont_panic"
 
 
-
-
-"""
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// FIXTURES
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-"""
-
-
-"""
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// HELPER CLASS TO BLOCK PRINTING
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-"""
-
-
-class BlockPrinting:
+@pytest.fixture(scope="session")
+def assets_path() -> Path:
     """
-    Simple context manager that blocks printing
-    """
-    def __enter__(self):
-        self._stdout = sys.stdout
-        sys.stdout = open(devnull, "w")
+    Returns the path to the test assets folder.
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout.close()
-        sys.stdout = self._stdout
+    :return: The path to the assets folder
+    """
+    return Path(Path(__file__).parent).joinpath("assets")
+
+
+@pytest.fixture
+def image_case(request: dict[str, Any]) -> tuple[Path, np.ndarray]:
+    (dimensions, file_extension) = request.param
+    match dimensions:
+        case 2:
+            filename = request.getfixturevalue("assets_path").joinpath(
+                IMAGE_2D + file_extension
+            )
+            reference = np.load(filename, allow_pickle=False)
+        case _:
+            msg = f"Invalid dimensions: {dimensions}"
+            raise ValueError(msg)
+    # noinspection PyUnboundLocalVariable
+    return filename, reference

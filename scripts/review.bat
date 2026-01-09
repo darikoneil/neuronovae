@@ -1,12 +1,9 @@
 @echo off
 
 :: move to project root
-cd ..
+cd..
 
-:: format imports
-isort . ./%PROJECT_NAME% ./tests
-
-:: run test suite
+:: run test suite with coverage
 coverage run
 
 :: export coverage to json / lcov for processing
@@ -14,10 +11,7 @@ coverage json
 coverage lcov
 
 :: export coverage to html for development in IDE
-coverage html=coverage
+coverage html
 
 :: report to console
 coverage report
-
-:: run linter (automatically goes to html for IDE due via configuration)
-flake8
