@@ -10,7 +10,13 @@ from tifffile import imread
 from neuronovae.issues import FileFormatError, PickleWarning
 from neuronovae.rois import ROI
 
-__all__ = ["ROIHandler", "Suite2PHandler", "load_images", "load_rois"]
+__all__ = [
+    "SUPPORTED_EXTENSIONS",
+    "ROIHandler",
+    "Suite2PHandler",
+    "load_images",
+    "load_rois",
+]
 
 
 @runtime_checkable
@@ -179,6 +185,12 @@ def load_images(file: str | PathLike) -> np.ndarray:
         raise FileFormatError(file)
 
     return loader(file)
+
+
+#: Set of supported image file extensions
+SUPPORTED_EXTENSIONS: set[str] = (
+    _NUMPY_EXTENSIONS | _OPENCV_EXTENSIONS | _TIFFFILE_EXTENSIONS
+)
 
 
 @runtime_checkable

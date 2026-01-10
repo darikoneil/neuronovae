@@ -72,6 +72,9 @@ class Color:
         Raises:
             ValueError: If the hex string is not in the correct format.
         """
+        if "#" not in hex_str:
+            msg = "Hex string must start with '#' character"
+            raise ValueError(msg)
         hex_str = hex_str.lstrip("#")
         length = len(hex_str)
         if length == 6:
@@ -92,9 +95,8 @@ class Color:
         else:
             msg = "Hex string must be in the format #RRGGBB or #RRGGBBAA"
             raise ValueError(msg)
-        return cls(
-            r / 255.0, g / 255.0, b / 255.0, a / 255.0 if a is not None else None
-        )
+
+        return cls.from_rgba(r, g, b, a if a is not None else 255.0)
 
     @classmethod
     def from_rgba(cls, r: float, g: float, b: float, a: float = 255.0) -> "Color":

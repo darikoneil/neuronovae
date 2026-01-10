@@ -1,10 +1,6 @@
 from pathlib import Path
-from typing import Any
 
-import numpy as np
 import pytest
-
-IMAGE_2D = "dont_panic"
 
 
 @pytest.fixture(scope="session")
@@ -14,20 +10,4 @@ def assets_path() -> Path:
 
     :return: The path to the assets folder
     """
-    return Path(Path(__file__).parent).joinpath("assets")
-
-
-@pytest.fixture
-def image_case(request: dict[str, Any]) -> tuple[Path, np.ndarray]:
-    (dimensions, file_extension) = request.param
-    match dimensions:
-        case 2:
-            filename = request.getfixturevalue("assets_path").joinpath(
-                IMAGE_2D + file_extension
-            )
-            reference = np.load(filename, allow_pickle=False)
-        case _:
-            msg = f"Invalid dimensions: {dimensions}"
-            raise ValueError(msg)
-    # noinspection PyUnboundLocalVariable
-    return filename, reference
+    return Path(__file__).parents[1].joinpath("assets")

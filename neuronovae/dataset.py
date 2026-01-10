@@ -34,7 +34,7 @@ class Dataset:
             rois=[ROI(...)],
             instructions=[ColorInstruction(...)],
             scaling=(10.0, 90.0),
-            chunk_size=5
+            chunk_size=5,
         )
         ```
     """
